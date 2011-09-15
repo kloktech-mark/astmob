@@ -1,0 +1,104 @@
+Colo: <%= @colo.name %>
+
+<% @rows.each {|row_key, row_value| %>
+<table class="colo_map">
+  <tr>
+    <th align="middle" valign="center" width="10"><b><%= row_key %></b></th>
+
+    <% for rack_key in (0..row_value.length-1) %>
+      <% rack = row_value[rack_key] %>
+      <% if !rack.nil?%>  
+
+        <td valign="top">
+          <table class="colo_map">
+            <tr><th colspan="2"><%= rack_key %></th></tr>
+            <% pos_count = 44 %>
+            <% while pos_count > 0 %>
+              <tr>
+                <th  height="<%= @base_height %>"><%= pos_count %></th>
+                <% if rack[pos_count].nil? %>
+                  <td bgcolor="#bcb"  height="<%= @base_height %>">
+                    &nbsp;
+                  </td>
+                  <% pos_count = pos_count - 1 %>
+                <% else %>
+                  <% 
+                  if rack[pos_count][0].resource.unit.nil?
+                    span = 1
+                  else 
+                    span = rack[pos_count][0].resource.unit 
+                  end 
+                  %>
+                                    
+                  <% if rack[pos_count][0].resource_type == 'Pdu'%>
+                    <% pdu_amp = rack[pos_count][0].resource.get_amp %>
+                    <% if !pdu_amp.nil?
+                         color="#77cf77"
+                       else
+                         color="#ee0033"
+                       end
+                    %>
+                    <td valign="center"  rowspan="<%= span %>" bgcolor="<%=color %>">
+                      <%= rack[pos_count].collect{|a| link_to a.name, edit_polymorphic_path(a.resource)}.join("<br/>") %>
+                      <br/>
+                      (<%= pdu_amp%>/<%= rack[pos_count][0].resource.pdu_model.ampere%> amp used)
+                  <% elsif rack[pos_count][0].resource_type == 'Network'%>
+                    <% if rack[pos_count][0].name.include? 'gsw'%>
+                      <% open_port = rack[pos_count][0].resource.open_port %>
+                      <% if !open_port.nil?
+                           color="#77cf77"
+                         else
+                           color="#ee0033"
+                         end
+                      %>
+                      <td valign="center"  rowspan="<%= span %>" bgcolor="<%=color %>">
+                        <%= rack[pos_count].collect{|a| link_to a.name, edit_polymorphic_path(a.resource)}.join("<br/>") %>
+                        <br/>
+                        (<%= open_port %>/<%= rack[pos_count][0].resource.total_port %> free)
+                    <% else %>                    
+                      <td valign="center"  rowspan="<%= span %>"">
+                        <%= rack[pos_count].collect{|a| link_to a.name, edit_polymorphic_path(a.resource)}.join("<br/>") %>
+                        <br/>
+                    <% end %>
+                  <% else %>
+                    <td valign="center" rowspan="<%= span %>">
+                    <%= rack[pos_count].collect{|a| link_to a.name, edit_polymorphic_path(a.resource)}.join("<br/>") %>
+                  <% end %>
+                  <% if span > 1%>
+                    <% (1..span-1).each do |i| %>
+                      </td>
+                      </tr>
+                      <tr><th height="<%= @base_height %>"><%= pos_count - i%></th>
+                    <% end %>
+                  <% else %>  
+                    </td>
+                  <% end %>         
+                  <% pos_count = pos_count - span %>
+                <% end %>
+              </tr>
+            <% end %>
+          </table>
+        </td>
+      <% else %>
+        <td valign="top">
+          <table class="colo_map">
+            <tr><th colspan="2"><%= rack_key %></th></tr>
+            <% pos_count = 44 %>
+            <% while pos_count > 0 %>
+              <tr>
+                <th height="<%= @base_height %>"><%= pos_count %></th>
+                <td width="40" bgcolor="#bcb">
+                  &nbsp;
+                </td>
+              </tr>
+              <% pos_count = pos_count - 1 %>
+            <% end %>
+          </table>
+        </td>             
+      <% end %>
+    <% end %>  
+  </tr>
+</table>
+<br/>
+<p class="pagebreakhere"/>
+<% } %>

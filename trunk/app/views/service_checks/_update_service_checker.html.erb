@@ -1,0 +1,41 @@
+<!-- <div id='implode-definition'>
+
+<br>
+	
+<p>
+  <b>This was in the observed field:</b>
+
+  <%= ServiceCheck.find(:first, :conditions => ["id = '#{@service_check.p}'"]).name %>
+</p>
+
+<p>
+  <b>This is the definition that was discovered from what's in the observed field:</b>
+  <%= x = ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.observed_field}'"]).definition %>
+</p>
+  <b> It has this many fields potentially to populate:</b>
+  <% arr = {} %>
+  <% arr = x.split('!') %>
+  <%= b = arr.length / 2 %><br>
+  <% c = arr.length %>
+  <% counter = 0 %>
+  <% while counter < c %>
+  <b>Field Arg <%= counter %>:</b>
+  <%= arr[counter] %>
+  <% counter = counter + 1 %>
+  <b>Field Content <%= counter %>: </b>
+  <%= text_field_tag :arg, arr[counter], :size => 20 %><br>
+  <% counter = counter + 1 %>
+  <% end %>
+
+    <%= submit_to_remote 'implode_definition','Update Service Check Parent',
+                        :url => {:controller => :service_checks , :action => :implode_definition, :id => @service_check},
+                        :update => 'implode-definition'
+                        %>
+						
+						
+<% form_for(@service_check) do |f| %>
+
+<% end %>
+
+</div>
+-->

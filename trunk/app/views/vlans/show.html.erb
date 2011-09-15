@@ -1,0 +1,13 @@
+<p>
+  <b>Name:</b>
+  <%=h @vlan.name %>
+</p>
+
+<p>
+  <b>Vlan number:</b>
+  <%=h @vlan.vlan_number %>
+</p>
+
+
+<%= link_to 'Edit', edit_vlan_path(@vlan) %> |
+<%= link_to 'Back', vlans_path %>

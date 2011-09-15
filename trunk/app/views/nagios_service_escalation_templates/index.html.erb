@@ -1,0 +1,20 @@
+<h1>Listing nagios service escalation templates</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+
+<% for nagios_service_escalation_template in @nagios_service_escalation_templates %>
+  <tr>
+    <td><%=h nagios_service_escalation_template.name %></td>
+    <td><%= link_to 'Show', nagios_service_escalation_template %></td>
+    <td><%= link_to 'Edit', edit_nagios_service_escalation_template_path(nagios_service_escalation_template) %></td>
+    <td><%= link_to 'Destroy', nagios_service_escalation_template, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New nagios_service_escalation_template', new_nagios_service_escalation_template_path %>

@@ -1,0 +1,52 @@
+<%= link_to(image_tag("new.png", :size => "16x16"), new_nagios_host_group_path) %>
+<h1>Listing nagios_host_groups</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Host Template</th>
+    <th>Hosts</th>
+    <th>Services(active service in bold)</th>
+  </tr>
+
+<% for nagios_host_group in @nagios_host_groups %>
+<% @nagios_host_group = nagios_host_group%>
+
+<% if @nagios_host_group.hosts.nil? %>
+<% @nagios_host_group.hosts = '[No Value]'%>
+<% end%>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+
+    <td>
+      <%= link_to(image_tag("trashcan.png", :size => "20x20"), nagios_host_group, :confirm => 'Are you sure?', :method => :delete ) %>  
+
+      <%= link_to nagios_host_group.name, edit_nagios_host_group_path(nagios_host_group) %>
+    </td>
+    
+    <td>
+      <%= @nagios_host_group.nagios_host_template.name %>
+    </td> 
+    
+    <!-- Force this to be one line at a time -->
+    <td width="1">
+      <%= in_place_editor_field :nagios_host_group, "hosts", {}, 
+      {:click_to_edit_text => "Click here to edit",
+      :text_between_controls => " ",
+      :rows => 5,
+      :cols => 22,
+      :external_control => "edit_#{nagios_host_group.id}"
+      } %>
+    </td>
+    <td>
+        <% for service in @nagios_host_group.nagios_services %>
+          <b><%=h service.name %></b> <br/>
+        <% end %>
+    	<% for service_container in @nagios_host_group.service_containers %>
+			  <%=h service_container.name %><br/>
+			<% end %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<br />

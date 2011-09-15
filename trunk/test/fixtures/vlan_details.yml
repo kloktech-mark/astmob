@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  colo_id: 1
+  vlan_id: 1
+  subnet: MyString
+
+two:
+  colo_id: 1
+  vlan_id: 1
+  subnet: MyString

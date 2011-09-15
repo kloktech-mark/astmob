@@ -1,0 +1,18 @@
+<p>
+  <b>Nagios service group:</b>
+  <%=h @nagios_service_group_detail.nagios_service_group_id %>
+</p>
+
+<p>
+  <b>Nagios host group:</b>
+  <%=h @nagios_service_group_detail.nagios_host_group_id %>
+</p>
+
+<p>
+  <b>Nagios service:</b>
+  <%=h @nagios_service_group_detail.nagios_service_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_nagios_service_group_detail_path(@nagios_service_group_detail) %> |
+<%= link_to 'Back', nagios_service_group_details_path %>

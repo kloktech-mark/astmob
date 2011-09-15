@@ -1,0 +1,40 @@
+<div id='update-interfaces'>
+<%= error_messages_for :interface %>
+ 
+  <p>
+    <b>IP</b><br />
+    <% for o in mini_new.interfaces %>
+      <%= o.ip %>
+      <%= o.name %>
+      <%= o.mac %>        
+      <%= link_to_remote 'Remove',
+                          :url => {:controller => 'interfaces', :action => :destroy, :id => o},
+                          :update => 'update-interfaces',
+                          :confirm => 'Are you sure?',
+                          :method => :delete
+                          %>
+      <br/>
+    <% end %>
+  <fieldset><legend>Add New IP</legend>
+    <table>
+      <tr>
+        <td>IP:</td><td><%= text_field :interface, :ip , :size => '15'%></td>
+      </tr>
+      <tr>
+        <td>Name(Optional):</td><td><%= text_field :interface, :name , :size => '10'%></td>
+      </tr>
+      <tr>
+        <td>Mac(Optional):</td><td><%= text_field :interface, :ip , :size => '15'%></td>
+      </tr>
+     
+    </table>     
+    <!--
+    <%= submit_to_remote 'add','Add',
+                        :url => {:controller => 'interfaces' , :action => :create, :id => mini_new},
+                        :update => 'update-interfaces'
+                        %>
+                        -->
+  </fieldset>
+  </p>
+       
+</div>

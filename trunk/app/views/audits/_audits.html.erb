@@ -1,0 +1,71 @@
+<%= link_to_function "Audits", update_page { |page| page.visual_effect :toggle_blind, 'audit-history' } %>
+
+<div id="audit-history" style="display: none">
+
+<table>
+  <tr>
+    <th>Type</th>
+    <th>User</th>
+    <th>Action</th>
+    <th>Time</th>
+    <th width="250">Changes</th>
+  </tr>
+
+<% for audit in (audits.audits | audits.child_record_audits).sort{|a,b| b.id <=> a.id} %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+      <% if audit.auditable_type == 'Asset' %>
+        <%=h audit.auditable.resource_type rescue nil%>
+      <% else %>
+        <%=h audit.auditable_type %>
+      <% end %>
+    </td>
+    <td><%=h audit.username %></td>
+    <td>
+      
+      <% if audit.action == 'destroy' %>
+        <font color="red">
+      <% elsif audit.action == 'create' %>
+        <font color="green">  
+      <% else %>
+        <font>
+      <% end %>
+      
+      <%=h audit.action.capitalize %>
+      
+      </font>
+    </td>
+    <td><%=h audit.created_at.strftime("%H:%M %m/%d/%y") %></td>
+    <td>
+      <% for change in audit.changes %> 
+        <% if audit.action == 'update' %>  
+          <b><%=h change[0] %></b> => ["<%=h change[1][1]%>"]
+          <br/>
+        <% else %>
+          <% if audit.auditable_type == 'Interface' %>
+            <% if change[0] == 'vlan_detail_id' %>
+              <%=h change[0] %> = <%=h VlanDetail.find(change[1]).vlan.name%>
+              <br/>
+            <% elsif change[0] == 'ip' %>
+              <%=h change[0] %> = <%=h Interface.i_to_ip(change[1]) %>
+              <br/>
+            <% elsif change[0] == 'asset_id' or change[0] == 'real_ip' or change[0] == 'description' %>  
+            <% else %>
+              <%=h change[0] %> = <%=h change[1]%>
+              <br/>
+            <% end %>
+          <% else %>
+            <%=h change[0] %> = <%=h change[1]%>
+            <br/>
+          <% end %>
+        <% end %>          
+        
+      <% end %>
+    </td>    
+  </tr>
+<% end %>
+
+</table>
+
+</div>
+

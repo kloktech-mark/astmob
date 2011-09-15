@@ -1,0 +1,26 @@
+<h1>New vlan_detail</h1>
+
+<%= error_messages_for :vlan_detail %>
+
+<% form_for(@vlan_detail) do |f| %>
+  <p>
+    <b>Colo</b><br />
+    <%= f.collection_select("colo_id", Colo.find(:all), "id", "name", :include_blank => true) %>
+  </p>
+
+  <p>
+    <b>Vlan</b><br />
+    <%= f.collection_select("vlan_id", Vlan.find(:all), "id", "name", :include_blank => true) %>
+  </p>
+
+  <p>
+    <b>Subnet</b><br />
+    <%= f.text_field :subnet %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', vlan_details_path %>

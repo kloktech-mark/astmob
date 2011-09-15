@@ -1,0 +1,19 @@
+<% for o in @assets %>
+  <%= o.name %>,<%= o.colo.name%>,
+  <% if o.resource_type == 'Server'%>
+    <%= o.resource.server_model.manufacture %> <%= o.resource.server_model.model%>
+  <% end%>
+
+  <% if o.resource_type == 'Network'%>
+ <%= o.resource.network_model.name %>
+  <% end%>
+
+  <% if o.resource_type == 'Storage'%>
+    <%= o.resource.controller %>
+  <% end%>  
+  
+  <% if o.resource_type == 'Pdu'%>
+    <%= o.resource.pdu_model.manufacture %> <%= o.resource.pdu_model.part_number %>
+  <% end%>    
+  <br/>
+<% end %>

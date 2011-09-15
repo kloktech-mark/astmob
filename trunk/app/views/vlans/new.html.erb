@@ -1,0 +1,21 @@
+<h1>New vlan</h1>
+
+<%= error_messages_for :vlan %>
+
+<% form_for(@vlan) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Vlan number</b><br />
+    <%= f.text_field :vlan_number %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', vlans_path %>

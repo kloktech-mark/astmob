@@ -1,0 +1,53 @@
+<div id='update-disk-details'>
+<%= error_messages_for :disk_detail %>
+
+ 
+  <p>
+    <b>Disk</b><br />
+    <table>
+      <tr>
+        <th>Manufacturer</th>
+        <th>Part #</th>
+        <th>Capacity</th>
+		<th>Drive Type</th>
+		<th>SCSI ID</th>
+
+      </tr>
+     
+      <% for o in mini_edit.disk_details %>
+        <% if ! o.disk_model.nil? %>
+
+          <tr class=<%= cycle('row_odd','row_even')%> >		  
+            <td><%= o.disk_model.name %></td>
+            <td><%= o.disk_model.part_number %></td>   
+            <td><%= o.disk_model.capacity %></td>
+			<td><%= o.disk_model.drivetype %></td>
+			<td><%= o.scsiid %></td>
+          </tr>
+        <% end %>
+      <% end %>
+
+    </table>
+
+      <!--
+      <%= link_to_remote 'Remove',
+                          :url => {:controller => 'disk_details', :action => :destroy, :id => o},
+                          :update => 'update-disk-details',
+                          :confirm => 'Are you sure?',
+                          :method => :delete
+                          %>
+      <br/>
+      -->
+<!--
+<br/>
+    <%= collection_select(:disk_detail, :disk_model_id, DiskModel.find(:all), "id", "name") %> - 
+    <%= text_field :disk_detail, :cnt , :size => '3'%>
+    <%= submit_to_remote 'add','Add',
+                        :url => {:controller => :disk_details , :action => :create, :id => mini_edit},
+                        :update => 'update-disk-details'
+
+                        %>
+-->
+  </p>
+
+</div>

@@ -1,0 +1,12 @@
+<div id='service_group_services'>
+  
+  <% if mini_service_select.length < 1 %> 
+    No Services Found
+  <% else %>
+    <%= collection_select("nagios_service_group_details","nagios_service_id", mini_service_select, "id", "name", 
+    {},{:multiple => true, :size => 7}) %>
+  <% end %>
+  
+</div>
+
+

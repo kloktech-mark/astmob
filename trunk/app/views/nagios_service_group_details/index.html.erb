@@ -1,0 +1,24 @@
+<h1>Listing nagios_service_group_details</h1>
+
+<table>
+  <tr>
+    <th>Nagios service group</th>
+    <th>Nagios host group</th>
+    <th>Nagios service</th>
+  </tr>
+
+<% for nagios_service_group_detail in @nagios_service_group_details %>
+  <tr>
+    <td><%=h nagios_service_group_detail.nagios_service_group_id %></td>
+    <td><%=h nagios_service_group_detail.nagios_host_group_id %></td>
+    <td><%=h nagios_service_group_detail.nagios_service_id %></td>
+    <td><%= link_to 'Show', nagios_service_group_detail %></td>
+    <td><%= link_to 'Edit', edit_nagios_service_group_detail_path(nagios_service_group_detail) %></td>
+    <td><%= link_to 'Destroy', nagios_service_group_detail, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New nagios_service_group_detail', new_nagios_service_group_detail_path %>

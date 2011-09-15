@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyText
+  dns_zone_id: 1
+  priority: 1
+
+two:
+  name: MyText
+  dns_zone_id: 1
+  priority: 1

@@ -1,0 +1,54 @@
+<h1>(Editing) Service_Container: <b><%= @service_container.name.titleize %></b></h1>
+<br />
+
+<%= error_messages_for :service_container %>
+
+<% form_for(@service_container) do |f| %>
+  <p>
+    <%= image_tag("digg_48.png", :size => "16x16") %><b>New Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <%= image_tag("image_48.png", :size => "16x16") %><b>Description</b><br />
+    <%= f.text_field :description %>
+  </p>  
+
+  <p>
+    <%= image_tag("clock_48.png", :size => "16x16") %><b>Frequency(secs) [Default value: 300]</b><br />
+    <%= f.text_field :frequency %>
+  </p>
+
+  <p>
+    <%= image_tag("phone.png", :size => "16x16") %><b>Nagios Service Template</b><br />
+	<% @nst = NagiosServiceTemplate.find(:all, :order => :name).map {|u| [u.name, u.id]}%>
+	<% me = @service_container.nagios_service_template_id %>
+	<%= select :service_container, :nagios_service_template_id, @nst, :selected => me.to_i %>
+
+  </p>
+
+  <p>
+    <%= image_tag("computer_48.png", :size => "16x16") %><b>Check Command</b><br />
+    <%= f.text_field :check_command %>
+  </p>
+
+  <p>
+    <%= image_tag("heart_48.png", :size => "16x16") %><b>Autofix Override</b><br />
+    <%= f.text_field :autofix %>
+  </p>
+    
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+
+  <br/>
+  <p>
+  	<%= link_to_function "Toggle Service Checks", update_page { |page| page.visual_effect :toggle_blind, 'update-service-checks' } %>
+  </p>
+
+  <div id='update-matched-service-checks'></div>
+  <%= render(:partial => "service_checks/mini_edit",:object => @service_container) %>
+  
+<%= link_to 'Show', @service_container %> |
+<%= link_to 'Back', service_containers_path %>
+<% end %>

@@ -1,0 +1,45 @@
+<p>
+  <b>Name:</b>
+  <%=h @service_checker.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @service_checker.description.capitalize %>
+</p>
+
+<p>
+  <b>Label:</b>
+  <%=h @service_checker.label %>
+</p>
+
+<p>
+  <b>Home Dir:</b>
+  <%=h @service_checker.home %>
+</p>
+
+<p>
+  <b>Command:</b>
+  <%=h @service_checker.command %>
+</p>
+<!--
+<p>
+  <b>Type:</b><br />
+  <%= radio_button("service_checker", "checker_type", "0", :disabled => true) %> Internal<br />
+  <%= radio_button("service_checker", "checker_type", "1", :disabled => true) %> External<br />
+</p>
+
+<p>
+  <b>Strictness:</b><br />
+  <%= radio_button("service_checker", "strict", "0", :disabled => true) %> Not Strict<br />
+  <%= radio_button("service_checker", "strict", "1", :disabled => true) %> Strict<br />  
+</p>
+-->
+<p>
+  <b>Definition:</b>
+  <%=h @service_checker.definition %>
+</p>
+
+
+<%= link_to 'Edit', edit_service_checker_path(@service_checker) %> |
+<%= link_to 'Back', service_checkers_path %>

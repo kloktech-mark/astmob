@@ -1,0 +1,95 @@
+<div id='update-nagios-services'">
+<%= error_messages_for :nagios_service %>
+
+
+  <p>
+    <b>Add Service</b><br/>
+
+    <% if mini_edit.nagios_services.empty? %>
+      <%= collection_select("nagios_services","nagios_service_id", NagiosService.find(:all, :order => "name"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+   
+    <% else %>
+      <%= collection_select("nagios_services","nagios_service_id", NagiosService.find(:all, 
+          :conditions => "id NOT IN ( #{mini_edit.nagios_services.collect{|a| a.id}.join(',')} )", :order => "name"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+
+    <% end %>
+    <%= submit_to_remote 'add','Add',
+                        :url => {:controller => :nagios_services , :action => :create_detail, :id => mini_edit},
+                        :update => 'update-nagios-services'
+                        %>  
+  </p>
+
+  <p>
+    <b>Add Escalation</b><br/>
+
+    <%= collection_select("nagios_services","nagios_service_id", mini_edit.nagios_services.sort{|a,b| a.name <=> b.name}, "id", "name", 
+        {},{:multiple => true, :size => 7}) %>
+
+    <%= collection_select("nagios_services","nagios_service_escalation_template_id", NagiosServiceEscalationTemplate.find(:all), "id", "name", 
+        {},{}) %>
+
+    <%= collection_select("nagios_services","nagios_contact_group_id", NagiosContactGroup.find(:all, :order => :name), "id", "name", 
+        {},{:multiple => true, :size => 7}) %>
+
+    <%= submit_to_remote 'add','Add',
+                        :url => {:controller => :nagios_services , :action => :create_escalation, :id => mini_edit},
+                        :update => 'update-nagios-services'
+                        %>  
+  </p>
+
+  <p>
+    <b> Existing Service</b><br/>
+
+    <table>
+      <tr>
+        <th>Service</th>
+        <th>Escalation</th>
+      </tr>
+        <% for nagios_service_detail in mini_edit.nagios_service_details.sort{|a,b| a.nagios_service.name <=> b.nagios_service.name} %>
+        <tr class=<%= cycle('row_odd','row_even')%> >
+
+          <td>
+
+          <%= link_to_remote '[X] ',
+                        :url => {:controller => 'nagios_services', :action => :destroy_detail, :id => nagios_service_detail},
+                        :update => 'update-nagios-services',
+                        :confirm => 'Are you sure?',
+                        :method => :delete
+                        %>
+          <%= nagios_service_detail.nagios_service.name %>
+    
+      
+          </td>
+            
+        
+          <td>
+            <table>
+            <% for escalation in nagios_service_detail.nagios_service_escalations.sort{|a,b| b.nagios_service_escalation_template_id <=> a.nagios_service_escalation_template_id} %>
+              <tr>
+                <td>
+                  <%= link_to_remote '[X] ',
+                                :url => {:controller => :nagios_services, :action => :destroy_service_escalation, :id => escalation},
+                                :update => 'update-nagios-services',
+                                :confirm => 'Are you sure?',
+                                :method => :delete
+                                %>
+                  
+                  <%= truncate(escalation.nagios_service_escalation_template.name, 50) %>
+                  (<%= escalation.nagios_contact_groups.collect{|a| a.name}.join(",") %>)
+                </td>
+              </tr>
+              
+            <% end %>
+            </table>
+          </td>
+        </tr>
+        <% end %>  
+
+    </table>
+      
+  </p>
+  <br/>
+  
+</div>    

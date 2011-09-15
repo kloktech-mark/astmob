@@ -1,0 +1,59 @@
+<h1>New pdu model</h1>
+
+<%= error_messages_for :pdu_model %>
+
+<% form_for(@pdu_model) do |f| %>
+
+  <p>
+    <b>Manufacture</b><br />
+    <%= f.text_field :manufacture %>
+  </p>
+
+  <p>
+    <b>Part number</b><br />
+    <%= f.text_field :part_number %>
+  </p>
+
+  <p>
+    <b>Unit</b><br />
+    <%= f.text_field :unit %>
+  </p>
+
+
+  <p>
+    <b>Receptible</b><br />
+    <%= f.text_field :receptible %>
+  </p>
+
+  <p>
+    <b>Voltage</b><br />
+    <%= f.text_field :voltage %>
+  </p>
+
+  <p>
+    <b>Ampere</b><br />
+    <%= f.text_field :ampere %>
+  </p>
+
+  <p>
+    <b>Wattage</b><br />
+    <%= f.text_field :wattage %>
+  </p>
+
+  <p>
+    <b>OID for Load</b><br />
+    <%= f.text_field :oid_load %>
+  </p>
+
+  <p>
+    <b>SNMP Read String</b><br />
+    <%= f.text_field :snmp_read %>
+  </p>
+
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', pdu_models_path %>

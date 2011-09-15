@@ -1,0 +1,32 @@
+<p>
+  <b>Name:</b>
+  <%=h @service_container.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @service_container.description.capitalize %>
+</p>
+
+<p>
+  <b>Frequency(secs):</b>
+  <%=h @service_container.frequency %>
+</p>
+
+<p>
+  <b>Nagios Service Template:</b>
+  <%= NagiosServiceTemplate.find(:first, :conditions => ["id = '#{@service_container.nagios_service_template_id}'"]).name rescue nil %>
+</p>
+
+<p>
+  <b>Check Command:</b>
+  <%=h @service_container.check_command %>
+</p>
+
+<p>
+  <b>Autofix Override:</b>
+  <%=h @service_container.autofix %>
+</p>
+
+<%= link_to 'Edit', edit_service_container_path(@service_container) %> |
+<%= link_to 'Back', service_containers_path %>

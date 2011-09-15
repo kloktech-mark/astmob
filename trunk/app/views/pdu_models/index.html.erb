@@ -1,0 +1,32 @@
+<h1>Listing pdu_models</h1>
+
+<table>
+  <tr>
+    <th>Part number</th>
+    <th>Manufacture</th>
+    <th>Type</th>
+    <th>Receptible</th>
+    <th>Voltage</th>
+    <th>Ampere</th>
+    <th>Wattage</th>
+  </tr>
+
+<% for pdu_model in @pdu_models %>
+  <tr>
+    <td><%=h pdu_model.part_number %></td>
+    <td><%=h pdu_model.manufacture %></td>
+    <td><%=h pdu_model.type %></td>
+    <td><%=h pdu_model.receptible %></td>
+    <td><%=h pdu_model.voltage %></td>
+    <td><%=h pdu_model.ampere %></td>
+    <td><%=h pdu_model.wattage %></td>
+    <td><%= link_to 'Show', pdu_model %></td>
+    <td><%= link_to 'Edit', edit_pdu_model_path(pdu_model) %></td>
+    <td><%= link_to 'Destroy', pdu_model, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New pdu_model', new_pdu_model_path %>

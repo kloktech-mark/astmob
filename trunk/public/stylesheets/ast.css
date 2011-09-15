@@ -1,0 +1,164 @@
+body { margin:0 0 0 5px;background-color:#fff;color:#222;font-size: 12px; font-family:Arial, sans-serif;}
+
+div, img {margin: 0 0 0 0;padding: 0 0 0 0;border:0;}
+
+a { color: #3366cc;text-decoration: none;font-weight: bold; }
+a:active { color: #3366cc }
+a:hover { color: #6699ff;text-decoration:underline; }
+
+A:link {
+  COLOR: #0052A4; TEXT-DECORATION: none
+}
+
+
+A:visited {
+  COLOR: #0052A4;TEXT-DECORATION: none
+}
+
+A:active {
+  COLOR: #0052A4;TEXT-DECORATION: none
+}
+
+
+A:hover {
+  TEXT-DECORATION: underline;
+}
+
+
+#center1 {
+   margin:5px 0px 0px 5px;
+   text-align: left;
+   float:left; 
+
+}
+
+#left1 {
+   float:left; 
+   margin:3px 0px 0px 0px;
+   text-align: left;
+  
+}
+
+table td{
+  padding: 3px;
+  text-align: left;
+}
+
+table th{
+  padding: 3px;
+  text-align:center;
+  background-color: #aaa
+}
+
+
+div.auto_complete {
+  width: 350px;
+  background: #eeffee;
+
+}
+
+div.auto_complete ul {
+  border:1px solid #888;
+  margin:0;
+  padding:0;
+  width:100%;
+  list-style-type:none;
+    
+}
+
+div.auto_complete ul li {
+  margin: 0;
+  padding: 3px;
+
+}
+
+div.auto_complete ul li.selected {
+  background-color: #ffb;    
+}
+
+div.auto_complete ul strong.highlight {
+  color: #800;
+  margin: 0;
+  padding: 0;
+}
+
+fieldset {
+  border: 3px solid #999;
+  width: 100px;
+  padding: 3px; 
+}
+
+
+.fieldWithErrors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+#errorExplanation {
+  width: 400px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#errorExplanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#errorExplanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#errorExplanation ul li {
+  font-size: 12px;
+  list-style: square;
+}  
+
+.row_odd {
+  background: #efefef;  
+}
+
+.row_even {
+  background: #ccc;
+}
+
+.tbl_list tr {
+  
+}
+
+.tbl_list th {
+  border: 2px solid #000;
+  padding: 5px;
+}
+
+p.pagebreakhere {page-break-before: always}
+
+.colo_map{
+  border: 1px solid #000;
+  
+  padding: 0px;
+  
+}
+
+.colo_map td{
+  border: 1px solid #333;
+  padding: 0.3px;
+  text-align: center;
+  vertical-align: middle;
+  font-size:x-small;
+}
+
+.colo_map th{
+  border: 1px solid #333;
+}

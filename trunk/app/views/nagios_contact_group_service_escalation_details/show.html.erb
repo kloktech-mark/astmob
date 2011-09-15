@@ -1,0 +1,13 @@
+<p>
+  <b>Nagios contact group:</b>
+  <%=h @nagios_contact_group_service_escalation_detail.nagios_contact_group_id %>
+</p>
+
+<p>
+  <b>Nagios service escalation:</b>
+  <%=h @nagios_contact_group_service_escalation_detail.nagios_service_escalation_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_nagios_contact_group_service_escalation_detail_path(@nagios_contact_group_service_escalation_detail) %> |
+<%= link_to 'Back', nagios_contact_group_service_escalation_details_path %>

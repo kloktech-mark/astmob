@@ -1,0 +1,70 @@
+<b>Mass Server Add with Mac</b> [?]
+For ex: hostname|mac, r101.atl15.yahoo.com|0025902BE9D6
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_server_mac} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.select("vlan_detail_id", @vlan_details) %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+
+<b>Mass Server Add</b> [?]
+For ex: One hostname per line.
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_server} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.select("vlan_detail_id", @vlan_details) %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+
+<b>Mass Server Rack Update</b> [?]
+For ex: name|row|rack|pos
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_rack} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Import" %>
+<% end %>
+<br/>
+
+<!--
+<b>Mass Drac IP import</b> [?]
+For ex: hostname,drac IP
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :drac_ip} ) do |f| -%>
+
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Import" %>
+<% end %>
+
+<br/>
+<b>Mass Nagios Service Import</b> [?]
+For ex: name||template||host_name||check_command
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :nagios_service} ) do |f| -%>
+
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Import" %>
+<% end %>
+
+<br/>
+<b>Mass Nagios Service Escalation Import</b> [?]
+For ex: template||hostname||service_description||contact_groups
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :nagios_service_escalation} ) do |f| -%>
+
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Import" %>
+<% end %>
+
+<br/>
+<b>Mass Nagios Service Group Import</b> [?]
+For ex: servicegroup_name||members
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :nagios_service_group} ) do |f| -%>
+
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Import" %>
+<% end %>
+<br/>
+<b>Mass DNS Cname Creation</b> [?]
+For ex: name||target
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_dns_cname} ) do |f| -%>
+
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Import" %>
+<% end %>
+-->

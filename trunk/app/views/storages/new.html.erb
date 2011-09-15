@@ -1,0 +1,42 @@
+<h1>New storage</h1>
+
+<%= error_messages_for :storage %>
+
+<% form_for(@storage) do |f| %>
+
+  <%= render (:partial => "assets/mini_new", :object => @storage.asset) %>
+
+  <p>
+    <b>Unit Size</b><br />
+    <%= f.text_field :unit %>
+  </p>
+  
+  <p>
+    <b>Raid type</b><br />
+    <%= f.text_field :raid_type %>
+  </p>
+
+  <p>
+    <b>Controller</b><br />
+    <%= f.text_field :controller %>
+  </p>
+
+  <p>
+    <b>Enclosure</b><br />
+    <%= f.text_field :enclosure %>
+  </p>
+
+  <p>
+    <b>OS</b><br />
+    <%= f.text_field :os %>
+  </p>
+
+  <%= render (:partial => "disk_details/mini_new", :object => DiskDetail.new) %>
+
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', storages_path %>

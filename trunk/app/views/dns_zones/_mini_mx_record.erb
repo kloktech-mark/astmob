@@ -1,0 +1,46 @@
+<div id='update-dns-mx-records'>
+  <p>
+    <b>MX Record</b><br />
+    <table>
+      <tr>
+        <th>name</th>
+        <th>priority</th>
+      </tr>
+        
+      <% for o in mini_mx_record.dns_mx_records %>
+        <tr class=<%= cycle('row_odd','row_even')%> >
+          <td>
+          <%= link_to_remote '[x]',
+                      :url => {:controller => 'dns_zones', :action => :destroy_mx_record, :id => o},
+                      :update => 'update-dns-mx-records',
+                      :confirm => 'Are you sure?',
+                      :method => :delete
+                      %>
+           <%= o.name %>
+          </td>
+          <td>
+            <%= o.priority %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </p>     
+  <fieldset><legend>Add MX Record</legend>
+
+    <table>
+      <tr>
+        <td>Name:</td><td><%= text_field :dns_mx_record, :name , :size => '15'%></td>
+      </tr>
+      <tr>
+        <td>Priority:</td><td><%= text_field :dns_mx_record, :priority , :size => '5'%></td>
+        
+      </tr>
+     
+    </table>
+         
+    <%= submit_to_remote 'add','Add',
+                       :url => {:controller => 'dns_zones' , :action => :create_mx_record, :id => mini_mx_record},
+                       :update => 'update-dns-mx-records'
+                       %>
+  </fieldset>
+</div>

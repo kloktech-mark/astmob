@@ -1,0 +1,20 @@
+<h1>Editing nagios_service_group</h1>
+
+<%= error_messages_for :nagios_service_group %>
+
+<% form_for(@nagios_service_group) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <%= render(:partial => "nagios_service_group_details/mini_edit",:object => @nagios_service_group) %>    
+  
+  <br/>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @nagios_service_group %> |
+<%= link_to 'Back', nagios_service_groups_path %>

@@ -1,0 +1,12 @@
+<%= @o %>
+<br/>
+<%= @assets.length %> assets matched:
+<table>
+
+<% for asset in @assets %>
+  <tr>
+    <td><%= asset.name %></td>
+  </tr>
+<% end %>
+
+</table>

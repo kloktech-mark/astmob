@@ -1,0 +1,12 @@
+<p style="color: red"><%= flash[:error] %></p>
+<% if @ocs_hardware.length == 1 %>
+  <p style="color: green">Server FOUND!!</p>  
+  <br/>
+
+  NAME = <%= @hardware.NAME + '.' + @hardware.WORKGROUP%><br/>
+  MODEL = <%= @hardware.ocs_bio.SMODEL%><br/>
+  
+<% else %>
+  Server is not available in OCS.
+<% end %>  
+  

@@ -1,0 +1,33 @@
+<h1>New asset</h1>
+
+<%= error_messages_for :asset %>
+
+Please select asset type: 
+<%= select :type, 
+  :choice, 
+  Asset::TYPES, { :include_blank => true }, 
+  { :onchange => "window.location = '/' + document.getElementById('type_choice').value + '/new' "} 
+%>
+
+
+<!--
+<% form_for(@asset) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Colo</b><br />
+    < collection_select("asset", "colo_id", @colos, "id", "name") >
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+-->
+
+<br/><br/>
+<%= link_to 'Back', assets_path %>

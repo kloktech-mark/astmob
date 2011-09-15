@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  raid_type: MyString
+  controller: MyString
+  enclosure: MyString
+  os: MyString
+
+two:
+  raid_type: MyString
+  controller: MyString
+  enclosure: MyString
+  os: MyString

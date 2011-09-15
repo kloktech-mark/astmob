@@ -1,0 +1,19 @@
+<%= link_to(image_tag("new.png", :size => "16x16"), new_nagios_contact_group_path) %>
+<h1>Listing nagios_contact_groups</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+
+<% for nagios_contact_group in @nagios_contact_groups %>
+  <tr>
+    <td><%=h nagios_contact_group.name %></td>
+    <td><%= link_to 'Show', nagios_contact_group %></td>
+    <td><%= link_to 'Edit', edit_nagios_contact_group_path(nagios_contact_group) %></td>
+    <td><%= link_to image_tag("trashcan.png", :size => "16x16"), nagios_contact_group, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />

@@ -1,0 +1,19 @@
+<br/>
+<%= link_to_function "OCS INFO", update_page { |page| page.visual_effect :toggle_blind, 'ocs-history' } %>
+<div id="ocs-history" style="display: none">
+  
+<% fields_for mini_history do |f| %> 
+  <div style = 'color:blue'>
+    <b>Last Update</b><br />
+	<%= f.text_field :updated_at, :size => "36", :readonly => true %>
+  </p>
+  
+  <p>
+    <b>Update History</b><br />
+    <%= f.text_area(:ocs_history, :rows => "5", :cols => "36", :readonly => true) %>
+  </p>
+  </div>
+<% end %>
+
+
+</div>

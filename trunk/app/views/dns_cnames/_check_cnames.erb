@@ -1,0 +1,2 @@
+<% for o in @asset.dns_cnames.sort{|a,b| a.name <=> b.name} %><%=o.name.strip %>
+<% end %>

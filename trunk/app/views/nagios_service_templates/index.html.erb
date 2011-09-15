@@ -1,0 +1,28 @@
+<h1>Listing nagios_service_templates</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Associated Services</th>
+  </tr>
+
+<% for nagios_service_template in @nagios_service_templates.sort{|a,b| a.name <=> b.name} %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+      <%= link_to '[X]', nagios_service_template, :confirm => 'Are you sure?', :method => :delete %>
+
+      <%= link_to nagios_service_template.name, edit_nagios_service_template_path(nagios_service_template) %>
+    </td>
+    
+    <td>
+      <% for service in nagios_service_template.nagios_services.sort{|a,b| a.name <=> b.name}%>
+        <%= service.name%> <br/>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New nagios_service_template', new_nagios_service_template_path %>

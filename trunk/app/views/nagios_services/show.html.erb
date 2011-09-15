@@ -1,0 +1,23 @@
+<p>
+  <b>Name:</b>
+  <%=h @nagios_service.name %>
+</p>
+
+<p>
+  <b>Use:</b>
+  <%=h @nagios_service.nagios_service_template.name %>
+</p>
+
+<p>
+  <b>Check command:</b>
+  <%=h @nagios_service.check_command %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @nagios_service.description %>
+</p>
+
+
+<%= link_to 'Edit', edit_nagios_service_path(@nagios_service) %> |
+<%= link_to 'Back', nagios_services_path %>

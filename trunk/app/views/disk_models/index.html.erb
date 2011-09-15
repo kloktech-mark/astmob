@@ -1,0 +1,26 @@
+<h1>Listing disk_models</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Speed</th>
+    <th>Capacity</th>
+    <th>Part number</th>
+  </tr>
+
+<% for disk_model in @disk_models %>
+  <tr>
+    <td><%=h disk_model.name %></td>
+    <td><%=h disk_model.speed %></td>
+    <td><%=h disk_model.capacity %></td>
+    <td><%=h disk_model.part_number %></td>
+    <td><%= link_to 'Show', disk_model %></td>
+    <td><%= link_to 'Edit', edit_disk_model_path(disk_model) %></td>
+    <td><%= link_to 'Destroy', disk_model, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New disk_model', new_disk_model_path %>

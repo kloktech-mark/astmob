@@ -1,0 +1,33 @@
+<h1>Provision Server to Different Vlan</h1><br/>
+
+<%= error_messages_for :server %>
+
+<% form_for(:server, :url => { :action => :assigning, :id => @server} ) do |f| %>
+
+  <p>
+    <b> Name: </b>
+    <%= @server.asset.name %>
+  </p>
+  
+  <p>
+    <b> Colo: </b>
+    <%= @server.asset.colo.name %>
+  </p>
+  
+  <%= render(:partial => "interfaces/mini_edit_no_new",:object => @server.asset) %>
+
+  <p>
+    <b>Vlan</b><br />
+    <%= select(:vlan_detail, "vlan_detail_id", 
+        VlanDetail.find(:all, 
+        :include => :vlan,
+        :conditions => "colo_id = #{@server.asset.colo_id} AND vlans.drac != '1'").collect {|p| [p.vlan.name, p.id]}, 
+        { :include_blank => true } )%>
+  </p>
+
+  <br/>
+  <p>
+    <%= f.submit "Submit" %>
+  </p>
+
+<% end %>

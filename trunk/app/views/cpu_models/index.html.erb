@@ -1,0 +1,22 @@
+<h1>Listing cpu_models</h1>
+
+<table>
+  
+
+<% for cpu_models in @cpu_models  %>
+  <tr>
+  	
+	<td><%=h cpu_models.speed rescue nil %></td>
+    <td><%=h cpu_models.type rescue nil %></td>
+    <td><%=h cpu_models.cores rescue nil %></td>    
+    <td><%= link_to 'Show', cpu_models rescue nil  %></td>
+	<td><%= link_to 'Edit', edit_cpu_model_path(memory_models)  rescue nil %></td>
+    <td><%= link_to 'Destroy', cpu_models, :confirm => 'Are you sure?', :method => :delete  rescue nil %></td>
+  
+    </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New cpu_models', new_cpu_model_path %>

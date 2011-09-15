@@ -1,0 +1,50 @@
+<h1>New service_check</h1>
+
+<%= error_messages_for :service_check %>
+
+<% form_for(@service_check) do |f| %>
+  <p>
+    <%= image_tag("digg_48.png", :size => "16x16") %><b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+  
+  <p>
+    <%= image_tag("image_48.png", :size => "16x16") %><b>Description</b><br />
+    <%= f.text_field :description %>
+  </p>  
+  
+  <p>
+    <%= image_tag("image_48.png", :size => "16x16") %><b>Name Root</b><br />
+    <%= f.text_field :root %>
+  </p>      
+
+  <p>
+    <%= image_tag("clock_48.png", :size => "16x16") %><b>Frequency:</b> defaults to 300 secs<br />
+    <%= f.hidden_field :frequency, :value => '300' %>
+  </p>  
+
+  <p>
+    <%= image_tag("book_48.png", :size => "16x16") %><b>Definition:</b> defaults to ''<br />
+    <%= f.hidden_field :definition, :value => '' %>
+  </p>  
+
+  <p>
+  	<%= image_tag("spanner_48.png", :size => "16x16") %><b>Checker Command</b><br />
+  	<%= 
+		f.collection_select(:service_checker_id, ServiceChecker.find(:all, :order => "name"), :id, :name) 
+	%>
+  </p>
+
+  <p>
+  	<%= image_tag("users_two_48.png", :size => "16x16") %><b>Parent</b><br />
+  	<%= 
+		f.collection_select(:parent_id, ServiceCheck.find(:all, :order => "name"), :id, :name) 
+	%>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', service_checks_path %>

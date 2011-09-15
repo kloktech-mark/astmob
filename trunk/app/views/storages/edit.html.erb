@@ -1,0 +1,50 @@
+<h1>Editing storage</h1>
+
+<%= error_messages_for :storage %>
+
+<% form_for(@storage) do |f| %>
+<table>
+  <tr valign="top">
+    <td>  
+      <%= render (:partial => "assets/mini_edit", :object => @storage.asset) %>   
+      <%= render (:partial => "interfaces/mini_edit", :object => @storage.asset) %>
+    </td>
+    <td>
+    
+      <p>
+        <b>Unit Size</b><br />
+        <%= f.text_field :unit %>
+      </p>
+    
+      <p>
+        <b>Raid type</b><br />
+        <%= f.text_field :raid_type %>
+      </p>
+    
+      <p>
+        <b>Controller</b><br />
+        <%= f.text_field :controller %>
+      </p>
+    
+      <p>
+        <b>Enclosure</b><br />
+        <%= f.text_field :enclosure %>
+      </p>
+    
+      <p>
+        <b>Os</b><br />
+        <%= f.text_field :os %>
+      </p>
+    
+      <%= render (:partial => "disk_details/mini_edit", :object => @storage.asset) %>
+    </td>
+  </tr>
+</table>
+<br/>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @storage %> |
+<%= link_to 'Back', storages_path %>

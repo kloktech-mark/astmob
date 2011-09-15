@@ -1,0 +1,50 @@
+<table>
+<tr valign="top">
+<td>
+<h1>Listing Hostgroups by Service Containers</h1>
+<table>	
+  <tr>
+    <th>Nagios Hostgroup</th>
+    <th>Service Container</th>
+  </tr>
+<% for host_group in NagiosHostGroup.find(:all, :order => :name) %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+	<!-- <td><%=h host_group.name rescue nil %></td> -->
+	<td><%= link_to host_group.name, edit_nagios_host_group_path(host_group)%></td>
+    <td>
+    	<% for service_container in host_group.service_containers.sort{|a,b| a.name <=> b.name}%>
+		<%= link_to service_container.name, edit_service_container_path(service_container) %><br/>
+        <!-- <%=h service_container.name rescue nil %><br/> -->
+		<% end %>      
+    </td>
+
+  </tr>
+<% end %>
+
+</table>
+</td>
+<td>
+<h1>Listing Containers by Hostgroup</h1>
+
+<table>
+  <tr>
+    <th>Service Container</th>
+    <th>Nagios Hostgroup</th>
+  </tr>
+
+<% for service_container in ServiceContainer.find(:all, :order => :name) %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+	<!-- <td><%=h service_container.name rescue nil %></td> -->
+	<td><%= link_to service_container.name, edit_service_container_path(service_container)%></td>
+    <td>
+    	<% for host_group in service_container.nagios_host_groups.sort{|a,b| a.name <=> b.name}%>
+		<%= link_to host_group.name, edit_nagios_host_group_path(host_group) %><br/>
+        <!-- <%=h host_group.name rescue nil %><br/> -->
+		<% end %>      
+    </td>
+
+  </tr>
+<% end %>
+</table>
+</td>
+</table>

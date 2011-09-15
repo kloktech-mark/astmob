@@ -1,0 +1,19 @@
+<div id='status-messages' style='color:red' title='Last update status'>
+
+  <p>
+  	<table>
+
+            <% if ! flash[:status].blank? %>
+			<b>The following items have been updated:</b>
+              <% for o in flash %>
+			    <% p = o[1].to_a %>
+				<% p.each do |n|%>
+			      <tr></tr> <td> <%= n + "\n" %> </td></tr>
+                <% end %>
+			  <% end %>
+            <% end %>
+    </table>  
+	
+  </p>
+
+</div>

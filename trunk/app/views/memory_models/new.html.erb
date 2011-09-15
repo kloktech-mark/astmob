@@ -1,0 +1,11 @@
+<h1>New memory_models</h1>
+
+<%= error_messages_for :memory_models %>
+
+<% form_for(@memory_models) do |f| %>
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', memory_models_path %>

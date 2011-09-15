@@ -1,0 +1,12 @@
+<h1>Editing cpu_models</h1>
+
+<%= error_messages_for :cpu_models %>
+
+<% form_for(@cpu_models) do |f| %>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @cpu_models %> |
+<%= link_to 'Back', cpu_models_path %>

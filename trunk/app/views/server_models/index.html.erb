@@ -1,0 +1,24 @@
+<h1>Listing server_models</h1>
+
+<table>
+  <tr>
+    <th>Manufacture</th>
+    <th>Model</th>
+    <th>Race Unit(U)</th>
+  </tr>
+
+<% for server_model in @server_models %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+      <%= link_to '[x]', server_model, :confirm => 'Are you sure?', :method => :delete %>
+      <%= link_to server_model.manufacture, edit_server_model_path(server_model) %>
+    </td>
+    <td><%=h server_model.model %></td>
+    <td><%=h server_model.unit %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New server_model', new_server_model_path %>

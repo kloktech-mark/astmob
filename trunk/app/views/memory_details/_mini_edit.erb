@@ -1,0 +1,27 @@
+<div id='update-memory-details'>
+<%= error_messages_for :memory_detail %>
+
+  <p>
+    <b>Memory</b><br />
+	<% cnt = 0 %>
+    <% for o in mini_edit.memory_details %>
+      <% cnt += 1 %>
+    <% end %>    
+    <table>
+      <tr>
+        <th>Total</th>
+        <th>Slots( <%= cnt %> )</th>
+      </tr>
+      <tr>
+        <td><b><%= mini_edit.memory_count %>Mb</b></td>
+        <td>
+          <% for o in mini_edit.memory_details %>
+            <%= o.slot %> - <%= o.memory_model.capacity.to_s + "MB" %><br/>
+          <% end %>
+        </td>
+      </tr>
+    </table>  
+
+  </p>
+
+</div>

@@ -1,0 +1,23 @@
+<h1>Editing colo</h1>
+
+<%= error_messages_for :colo %>
+
+<% form_for(@colo) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Description</b><br />
+    <%= f.text_area :description, :rows => "5", :cols => "30" %>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+
+<%= link_to 'Show', @colo %> |
+<%= link_to 'Back', colos_path %>

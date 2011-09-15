@@ -1,0 +1,27 @@
+<h1>Editing nagios_service_group_detail</h1>
+
+<%= error_messages_for :nagios_service_group_detail %>
+
+<% form_for(@nagios_service_group_detail) do |f| %>
+  <p>
+    <b>Nagios service group</b><br />
+    <%= f.text_field :nagios_service_group_id %>
+  </p>
+
+  <p>
+    <b>Nagios host group</b><br />
+    <%= f.text_field :nagios_host_group_id %>
+  </p>
+
+  <p>
+    <b>Nagios service</b><br />
+    <%= f.text_field :nagios_service_id %>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @nagios_service_group_detail %> |
+<%= link_to 'Back', nagios_service_group_details_path %>

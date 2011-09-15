@@ -1,0 +1,22 @@
+<h1>Editing service_check_detail</h1>
+
+<%= error_messages_for :service_check_detail %>
+
+<% form_for(@service_check_detail) do |f| %>
+  <p>
+    <b>Service Container</b><br />
+    <%= f.text_field :service_container_id %>
+  </p>
+
+  <p>
+    <b>Service Check</b><br />
+    <%= f.text_field :service_check_id %>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @service_check_detail %> |
+<%= link_to 'Back', service_check_details_path %>

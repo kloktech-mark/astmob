@@ -1,0 +1,30 @@
+<%= will_paginate @assets %>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Colo</th>
+    <th>Type</th>
+
+  </tr>
+
+<% for asset in @assets %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+
+    <td><%= link_to asset.name, edit_polymorphic_path(asset.resource) %></td>
+    <!-- <td><%=h asset.name rescue nil %></td> -->
+    <td><%=h asset.colo.name rescue nil %></td>
+    <td><%=h asset.resource_type rescue nil %></td>    
+    <!--
+    <td><%= link_to 'Show', asset.resource %></td>
+    <td><%= link_to 'Edit', edit_polymorphic_path(asset.resource) %></td>
+    <td><%= link_to 'Destroy', url_for( :controller => asset.resource_type.pluralize, :action => 'destroy', :id => asset.resource_id), :confirm => 'Are you sure?' %></td>
+    -->
+  </tr>
+<% end %>
+
+</table>
+
+<%= will_paginate @assets %>
+
+<br/>
+<%= link_to 'New asset', new_asset_path %>

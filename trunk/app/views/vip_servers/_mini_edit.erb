@@ -1,0 +1,50 @@
+<div id='update-vip-servers'>
+
+<% fields_for mini_edit do |f| %> 
+
+  <p>
+    <% for o in mini_edit.vip_servers %>
+      <% if !o.nil? && !o.asset.nil?%>
+        <%= o.asset.name %>:<%= o.port %>  
+        <%= link_to_remote 'Remove',
+                      :url => {:controller => 'vip_servers', :action => :destroy, :id => o},
+                      :update => 'update-vip-servers',
+                      :confirm => 'Are you sure?',
+                      :method => :delete
+                      %>
+      <% else %>
+        <font color="red">vip server id <%= o.id %> is invalid.</font>
+        <%= link_to_remote 'Remove',
+              :url => {:controller => 'vip_servers', :action => :destroy, :id => o},
+              :update => 'update-vip-servers',
+              :confirm => 'Are you sure?',
+              :method => :delete
+              %>
+      <% end %>              
+      <br/>
+    <% end %>
+    <br/>
+
+    <b>Select Server</b><br />
+    <% if mini_edit.server_behind_me_ids.empty? %>
+      <%= collection_select("vip_server","asset_id", Asset.find(:all, :order => :name,
+          :conditions => "resource_type = 'Server'"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+   
+    <% else %>
+      <%= collection_select("vip_server","asset_id", Asset.find(:all, :order => :name,
+          :conditions => "resource_type = 'Server' AND id NOT IN ( #{mini_edit.server_behind_me_ids.join(',')} )"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+
+    <% end %>
+    Port
+    <%= text_field :vip_server, :port , :size => '5'%>
+    <%= submit_to_remote 'add','Add',
+                        :url => {:controller => :vip_servers , :action => :create, :id => mini_edit},
+                        :update => 'update-vip-servers'
+                        %>
+  </p>
+
+<% end %>
+
+</div>

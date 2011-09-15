@@ -1,0 +1,22 @@
+<h1>Editing asset</h1>
+
+<%= error_messages_for :asset %>
+
+<% form_for(@asset) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Colo</b><br />
+    <%= collection_select("asset", "colo_id", @colos, "id", "name") rescue nil%>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @asset %> |
+<%= link_to 'Back', assets_path %>

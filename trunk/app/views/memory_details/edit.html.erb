@@ -1,0 +1,12 @@
+<h1>Editing memory_details</h1>
+
+<%= error_messages_for :memory_details %>
+
+<% form_for(@memory_details) do |f| %>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @memory_details %> |
+<%= link_to 'Back', memory_details_path %>
