@@ -1,0 +1,46 @@
+  <!-- <%= link_to 'Asset', assets_path -%><br/> -->
+  Asset<br/>
+  <%= link_to '-- Server', servers_path %><br/>
+  <%= link_to '-- Network', networks_path %><br/>
+  <%= link_to '-- Vip', vips_path %><br/>
+  <%= link_to '-- Storage', storages_path %><br/>
+  <%= link_to '-- Pdu', pdus_path %><br/>
+  <hr/>
+  DNS<br/>
+  <%= link_to '-- Cnames', dns_cnames_path %><br/>
+  <%= link_to '-- Zones', dns_zones_path %><br/>
+  <hr/>
+  Nagios<br/>
+  <%= link_to '-- Hostgroup', nagios_host_groups_path %><br/>
+  <%= link_to '-- Host Templates', nagios_host_templates_path %><br/>
+  <%= link_to '-- Services', nagios_services_path %><br/>
+  <%= link_to '-- Services Details', nagios_service_details_path %><br/>
+  <%= link_to '-- Srvc. Templates', nagios_service_templates_path %><br/>
+  <%= link_to '-- Srvc Group', nagios_service_groups_path %><br/>
+  <%= link_to '-- Srvc Group Details', nagios_service_group_details_path %><br/>    
+  <%= link_to '-- Srvc. Escalation', nagios_service_escalations_path %><br/>
+  <%= link_to '-- Srvc. Ecl Templates', nagios_service_escalation_templates_path %><br/>
+  <%= link_to '-- Contact Group', nagios_contact_groups_path %><br/>
+  <%= link_to '-- Service Containers', service_containers_path %><br/>
+  <%= link_to '-- Service Checkers', service_checkers_path %><br/>
+  <%= link_to '-- Service Checks', service_checks_path %><br/>
+  <hr/>
+  Nagios Views<br/>
+  <%= link_to '-- Container by Srvc.', service_check_details_path %><br/>
+  <%= link_to '-- Container by Hostgroup', service_container_details_path %><br/>
+  <hr/>
+  Colocation<br/>
+  <%= link_to 'Colo', colos_path %><br/>
+  <%= link_to 'Vlan', vlans_path %><br/> 
+  <%= link_to 'Colo -> Vlan', vlan_details_path %><br/>
+  <hr/>
+  Model<br/>
+  <%= link_to '-- Server Models', server_models_path %><br/>
+  <%= link_to '-- Network Models', network_models_path %><br/>
+  <%= link_to '-- Disk Models', disk_models_path %><br/>
+  <%= link_to '-- Pdu Models', pdu_models_path %><br/>
+  <hr/>
+  Misc<br/>
+  <%= link_to '-- Audits', "/audits" %><br/>
+  <%= link_to '-- Mass Ops', "/mass_import" %><br/>
+<!--  <%= link_to 'Mass OCS Update', "/mass_ocs_update" %><br/> -->

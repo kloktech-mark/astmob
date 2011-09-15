@@ -1,0 +1,17 @@
+<h1>Editing nagios_service_template</h1>
+
+<%= error_messages_for :nagios_service_template %>
+
+<% form_for(@nagios_service_template) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @nagios_service_template %> |
+<%= link_to 'Back', nagios_service_templates_path %>

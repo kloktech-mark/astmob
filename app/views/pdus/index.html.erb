@@ -1,0 +1,24 @@
+<h1>Listing pdus</h1>
+
+<table>
+  <tr>
+    <th>Name </th>
+    <th>Colo</th>
+    <th>Part Number</th>
+  </tr>
+
+<% for pdu in @pdus %>
+  <tr>
+    <td>
+      <%= link_to '[x]', pdu, :confirm => 'Are you sure?', :method => :delete %>
+      <%= link_to pdu.asset.name, edit_pdu_path(pdu) %>
+    </td>
+    <td><%=h pdu.asset.colo.name %></td>
+    <td><%= link_to pdu.pdu_model.part_number, edit_pdu_model_path(pdu.pdu_model) %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New pdu', new_pdu_path %>

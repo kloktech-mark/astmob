@@ -1,0 +1,34 @@
+<h1>Listing dns_zones</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Inherit</th>
+    <th>Ttl</th>
+    <th>Soa</th>
+    <th>Refresh</th>
+    <th>Retry</th>
+    <th>Expire</th>
+    <th>Minimum</th>
+  </tr>
+
+<% for dns_zone in @dns_zones.sort{|a,b| a.name <=> b.name} %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+      <%= link_to '[X]', dns_zone, :confirm => 'Are you sure?', :method => :delete %>
+      <%= link_to dns_zone.name, edit_dns_zone_path(dns_zone) %>
+    </td>
+    <td><%=h dns_zone.inherit_from.name rescue nil %></td>
+    <td><%=h dns_zone.ttl %></td>
+    <td><%=h dns_zone.soa %></td>
+    <td><%=h dns_zone.refresh %></td>
+    <td><%=h dns_zone.retry %></td>
+    <td><%=h dns_zone.expire %></td>
+    <td><%=h dns_zone.minimum %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New dns_zone', new_dns_zone_path %>

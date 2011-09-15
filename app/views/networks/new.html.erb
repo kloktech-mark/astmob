@@ -1,0 +1,19 @@
+<h1>New network</h1>
+
+<%= error_messages_for :network %>
+
+<% form_for(@network) do |f| %>
+
+  <%= render (:partial => "assets/mini_new", :object => @network.asset) %>
+
+  <p>
+    <b>Network model</b><br />
+    <%= f.collection_select( "network_model_id", NetworkModel.find(:all), "id", "name") %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', networks_path %>

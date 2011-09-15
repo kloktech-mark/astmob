@@ -1,0 +1,26 @@
+<h1>Listing vlan_details</h1>
+
+<table>
+  <tr>
+    <th>Colo</th>
+    <th>Vlan</th>
+    <th>Vlan #</th>
+    <th>Subnet</th>
+    <th>Actions</th>
+  </tr>
+
+<% for vlan_detail in @vlan_details.sort_by { |a| [a.colo.name,a.vlan.name] } %>
+  <tr>
+    <td><%=h vlan_detail.colo.name %></td>
+    <td><%=h vlan_detail.vlan.name %></td>
+    <td><%=h vlan_detail.vlan.vlan_number %></td>
+    <td><%=h vlan_detail.subnet %></td>
+    <td><%= link_to 'Edit', edit_vlan_detail_path(vlan_detail) %> | 
+    <%= link_to 'Destroy', vlan_detail, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New vlan_detail', new_vlan_detail_path %>

@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  nagios_service_group_id: 1
+  nagios_host_group_id: 1
+  nagios_service_id: 1
+
+two:
+  nagios_service_group_id: 1
+  nagios_host_group_id: 1
+  nagios_service_id: 1

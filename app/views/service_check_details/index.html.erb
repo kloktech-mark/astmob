@@ -1,0 +1,52 @@
+<table>
+<tr valign="top">
+<td>
+<h1>Listing Containers by Service Checks</h1>
+<table>
+  <tr>
+    <th>Service Check</th>
+    <th>Service Container</th>
+  </tr>
+<% for service_check in ServiceCheck.find(:all, :order => :name) %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+  	<td><%= link_to service_check.name, edit_service_check_path(service_check) %></td>
+    <!-- <td><%=h service_check.name rescue nil %></td> -->
+    <td>
+		<% for service_container in service_check.service_containers.sort{|a,b| a.name <=> b.name}%>
+		<%= link_to service_container.name, edit_service_container_path(service_container) %><br/>
+       <!-- <%=h service_container.name rescue nil %><br/> -->
+		<% end %>      
+    </td>
+
+  </tr>
+<% end %>
+
+</table>
+</td>
+<td>
+
+<h1>Listing Service Checks by Container</h1>
+
+<table>
+  <tr>
+    <th>Service Container</th>
+    <th>Service Check</th>
+  </tr>
+
+<% for service_container in ServiceContainer.find(:all, :order => :name) %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+  	<td><%= link_to service_container.name, edit_service_container_path(service_container) %></td>
+    <!-- <td><%=h service_container.name rescue nil %></td> -->
+    <td>
+		<% for service_check in service_container.service_checks.sort{|a,b| a.name <=> b.name}%>
+		<%= link_to service_check.name, edit_service_check_path(service_check) %><br/>
+        <!-- <%=h service_check.name rescue nil %><br/> -->
+		<% end %>      
+    </td>
+
+  </tr>
+<% end %>
+
+</table>
+</td>
+</table>

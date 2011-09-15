@@ -1,0 +1,49 @@
+<div id='update-service-checks'">
+<%= error_messages_for :service_check %>
+
+  <p>
+   <!-- <b>Add Service Check</b><br/> -->
+
+    <% if mini_edit.service_checks.empty? %>
+      <%= collection_select("service_checks","service_check_id", ServiceCheck.find(:all, :order => "name"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+   
+    <% else %>
+      <%= collection_select("service_checks","service_check_id", ServiceCheck.find(:all, 
+          :conditions => "id NOT IN ( #{mini_edit.service_checks.collect{|a| a.id}.join(',')} )", :order => "name"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+
+    <% end %>
+    <%= submit_to_remote 'add','Add',
+                        :url => {:controller => :service_checks , :action => :create_detail, :id => mini_edit},
+                        :update => 'update-service-checks'
+                        %>  
+  </p>
+
+  <p>
+    <b> Existing Service Checks</b><br/>
+
+    <table>
+      <tr>
+        <th>Service</th>
+      </tr>
+        <% for service in mini_edit.service_check_details.sort{|a,b| a.service_check.name <=> b.service_check.name } %>
+        <tr class=<%= cycle('row_odd','row_even')%> >
+
+          <td>
+
+          <%= link_to_remote '[X] ',
+                        :url => {:controller => 'service_checks', :action => :destroy_detail, :id => service},
+                        :update => 'update-service-checks',
+                        :confirm => 'Are you sure you want to delete Service check: ' + service.service_check.name + '?',
+                        :method => :delete
+                        %>
+          <%= service.service_check.name %>
+          
+          </td>
+        </tr>  
+		<% end %>
+    </table>      
+  </p>
+  <br/>  
+</div>

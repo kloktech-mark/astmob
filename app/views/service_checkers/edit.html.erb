@@ -1,0 +1,57 @@
+<h1>(Editing) Service_Checker: <b><%= @service_checker.name %></b></h1>
+<br />
+
+<%= error_messages_for :service_checker %>
+
+<% form_for(@service_checker) do |f| %>
+  <p>
+    <%= image_tag("digg_48.png", :size => "16x16") %><b>New Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <%= image_tag("image_48.png", :size => "16x16") %><b>Description</b><br />
+    <%= f.text_field :description %>
+  </p>  
+
+  <p>
+    <%= image_tag("image_48.png", :size => "16x16") %><b>Label</b><br />
+    <%= f.text_field :label %>
+  </p>  
+  
+  <p>
+    <%= image_tag("home_48.png", :size => "16x16") %><b>Home Dir</b><br />
+    <%= f.text_field :home %>
+  </p>  
+
+  <p>
+    <%= image_tag("spanner_48.png", :size => "16x16") %><b>Command</b><br />
+    <%= f.text_field :command %>
+  </p>      
+<!--
+  <p>
+    <%= image_tag("star_half_48.png", :size => "16x16") %><b>Type</b><br />
+    <%= f.radio_button(:checker_type, "0") %> Internal<br />
+	<%= f.radio_button(:checker_type, "1") %> External<br />	
+  </p>
+  
+  <p>
+    <%= image_tag("lock_open_48.png", :size => "16x16") %><b>Strict</b><br />
+    <%= f.radio_button(:strict, "0") %> Not Strict<br />
+	<%= f.radio_button(:strict, "1") %> Strict<br />	
+  </p>
+--> 
+  <p>
+    <%= f.submit "Update" %>
+  </p> 
+  <p>
+	<div id='build-checker-definition'>
+	<%= render(:partial => "build_checker_definition",:object => @service_checker) %>
+	</div>		
+  </p>
+  <br/>    
+
+<% end %>
+
+<%= link_to 'Show', @service_checker %> |
+<%= link_to 'Back', service_checkers_path %>

@@ -1,0 +1,27 @@
+<h1>Editing vlan</h1>
+
+<%= error_messages_for :vlan %>
+
+<% form_for(@vlan) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Vlan number</b><br />
+    <%= f.text_field :vlan_number %>
+  </p>
+
+  <p>
+    <b>Drac Vlan? </b>
+    <%= f.check_box :drac %>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @vlan %> |
+<%= link_to 'Back', vlans_path %>

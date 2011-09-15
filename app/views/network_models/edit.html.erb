@@ -1,0 +1,23 @@
+<h1>Editing network_model</h1>
+
+<%= error_messages_for :network_model %>
+
+<% form_for(@network_model) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Unit</b><br />
+    <%= f.text_field :unit %>
+  </p>
+
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @network_model %> |
+<%= link_to 'Back', network_models_path %>

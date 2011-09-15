@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  contact_group_id: 1
+  host_group_id: 1
+  service_description: MyString
+  nagios_service_escalation_template_id: 1
+
+two:
+  contact_group_id: 1
+  host_group_id: 1
+  service_description: MyString
+  nagios_service_escalation_template_id: 1

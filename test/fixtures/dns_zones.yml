@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyText
+  inherit: 1
+  ttl: 1
+  soa: MyText
+  refresh: 1
+  retry: 1
+  expire: 1
+  minimum: 1
+
+two:
+  name: MyText
+  inherit: 1
+  ttl: 1
+  soa: MyText
+  refresh: 1
+  retry: 1
+  expire: 1
+  minimum: 1

@@ -1,0 +1,54 @@
+<%= error_messages_for :asset %>
+
+<% fields_for mini_new do |f| %> 
+
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+    <%= f.error_message_on (:name) %>
+
+  </p>
+  <% if use_ocs and controller_is('servers') %>
+    <%= submit_to_remote 'check_ocs','Check OCS',
+                    :url => {:controller => 'Servers', :action => :check_ocs, :id => mini_new},
+                    :update => 'update-server-details',
+                    :before => "Element.show('spinner');$('update-server-details').innerHTML = 'Checking OCS...';",
+                    :complete => "Element.hide('spinner');"
+
+    %>
+      
+    <div id = 'update-server-details'>
+    
+    </div>
+    
+  <% end %>
+
+  <table>
+    <tr>
+      <th>Colo</th>
+      <th>Row</th>
+      <th>Rack</th>
+      <th>Pos</th>
+    </tr>
+    <tr>
+      <td><%= f.collection_select("colo_id", Colo.find(:all), "id", "name") %></td>
+      <td><%= f.text_field (:row, {:size => "1"}) %></td>
+      <td><%= f.text_field (:rack, {:size => "1"}) %></td>
+      <td><%= f.text_field (:pos, {:size => "1"}) %></td>
+    </tr>
+  </table>
+  
+  <p>
+    <b>Asset Tag</b><br />
+    <%= f.text_field :asset_tag, :size => "15" %>
+  </p>
+  
+  <p>
+    <b>Note</b><br />
+    <%= f.text_area(:note, :rows => "5", :cols => "30") %>
+  </p>
+
+
+
+<% end %>
+

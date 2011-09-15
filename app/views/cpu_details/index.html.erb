@@ -1,0 +1,18 @@
+<h1>Listing memory_details</h1>
+
+<table>
+  <tr>
+  </tr>
+
+<% for memory_detail in @memory_details %>
+  <tr>
+    <td><%= link_to 'Show', memory_detail %></td>
+    <td><%= link_to 'Edit', edit_memory_detail_path(memory_detail) %></td>
+    <td><%= link_to 'Destroy', memory_detail, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New memory_detail', new_memory_detail_path %>

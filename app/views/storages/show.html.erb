@@ -1,0 +1,23 @@
+<p>
+  <b>Raid type:</b>
+  <%=h @storage.raid_type %>
+</p>
+
+<p>
+  <b>Controller:</b>
+  <%=h @storage.controller %>
+</p>
+
+<p>
+  <b>Enclosure:</b>
+  <%=h @storage.enclosure %>
+</p>
+
+<p>
+  <b>Os:</b>
+  <%=h @storage.os %>
+</p>
+
+
+<%= link_to 'Edit', edit_storage_path(@storage) %> |
+<%= link_to 'Back', storages_path %>

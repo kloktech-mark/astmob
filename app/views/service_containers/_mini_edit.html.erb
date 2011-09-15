@@ -1,0 +1,49 @@
+<div id='update-service-containers'">
+<%= error_messages_for :service_container %>
+
+  <p>
+    <b>Add Service Container</b><br/>
+
+    <% if mini_edit.service_containers.empty? %>
+      <%= collection_select("service_containers","service_container_id", ServiceContainer.find(:all, :order => "name"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+   
+    <% else %>
+      <%= collection_select("service_containers","service_container_id", ServiceContainer.find(:all, 
+          :conditions => "id NOT IN ( #{mini_edit.service_containers.collect{|a| a.id}.join(',')} )", :order => "name"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+
+    <% end %>
+    <%= submit_to_remote 'add','Add',
+                        :url => {:controller => :service_containers , :action => :create_detail, :id => mini_edit},
+                        :update => 'update-service-containers'
+                        %>  
+  </p>
+
+  <p>
+    <b> Existing Service Containers</b><br/>
+
+    <table>
+      <tr>
+        <th>Service</th>
+      </tr>
+        <% for service in mini_edit.service_container_details.sort{|a,b| a.service_container.name <=> b.service_container.name} %>
+        <tr class=<%= cycle('row_odd','row_even')%> >
+
+          <td>
+
+          <%= link_to_remote image_tag("trashcan.png", :size => "16x16"),
+                        :url => {:controller => 'service_containers', :action => :destroy_detail, :id => service},
+                        :update => 'update-service-containers',
+                        :confirm => 'Are you sure you want to unlink the Service Container: ' + service.service_container.name + '?',
+                        :method => :delete
+                        %>
+          <%= link_to service.service_container.name, edit_service_container_path(service.service_container)%>
+          
+          </td>
+        </tr>
+        <% end %>  
+    </table>      
+  </p>
+  <br/>  
+</div>

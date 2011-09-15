@@ -1,0 +1,36 @@
+Schema Version: 1.0.3
+Release date: May 19, 2009
+
+-== JSON generated from AST on <%= Time.now %> ==-
+
+===============
+= Change log: =
+============================
+= Legend:                  =
+=        + New feature     =
+=        / Bug fix         =
+=        - Feature removed =
+=        * Miscellaneous   =
+============================
+July 16, 2009: version 1.0.4
+  / Updated json-creating code to reflect a bug fix in how service_checks were incorrectly displayed if the last field was optional
+    and left blank. This also appeared if the service_check had several fields without get_opt-type labels.
+=====
+May 19, 2009: version 1.0.3
+ * Container error string rephrased to, "Error: No populated containers found for this host."
+ / Malformed json on bad containers fixed.
+ - Empty containers no longer echo an error message.
+ + Empty containers no longer will make it into the json.
+ - Removed references to internal/external checker types.
+=====
+Apr 30, 2009: version 1.0.2
+ + Add frequency attribute to the container level.
+===== 
+Apr 22, 2009: version 1.0.1
+ * Start of change log.
+ * Added versioning.
+=====
+
+<!-- Begin JSON -->
+<%= @obj %>
+<!-- End JSON -->

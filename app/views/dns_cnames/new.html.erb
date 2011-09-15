@@ -1,0 +1,15 @@
+<h1>New dns_cname</h1>
+
+<%= error_messages_for :dns_cname %>
+
+<% form_for(@dns_cname) do |f| %>
+  
+  <%= render (:partial => "assets/mini_new_name_only", :object => @dns_cname.asset) %>
+  
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', dns_cnames_path %>

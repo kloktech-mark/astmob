@@ -1,0 +1,43 @@
+<p>
+  <b>Name:</b>
+  <%=h @dns_zone.name %>
+</p>
+
+<p>
+  <b>Inherit:</b>
+  <%=h @dns_zone.inherit %>
+</p>
+
+<p>
+  <b>Ttl:</b>
+  <%=h @dns_zone.ttl %>
+</p>
+
+<p>
+  <b>Soa:</b>
+  <%=h @dns_zone.soa %>
+</p>
+
+<p>
+  <b>Refresh:</b>
+  <%=h @dns_zone.refresh %>
+</p>
+
+<p>
+  <b>Retry:</b>
+  <%=h @dns_zone.retry %>
+</p>
+
+<p>
+  <b>Expire:</b>
+  <%=h @dns_zone.expire %>
+</p>
+
+<p>
+  <b>Minimum:</b>
+  <%=h @dns_zone.minimum %>
+</p>
+
+
+<%= link_to 'Edit', edit_dns_zone_path(@dns_zone) %> |
+<%= link_to 'Back', dns_zones_path %>

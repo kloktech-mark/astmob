@@ -1,0 +1,22 @@
+<h1>Editing dns_cname</h1>
+
+<%= error_messages_for :dns_cname %>
+
+<% form_for(@dns_cname) do |f| %>
+<table>
+  <tr valign="top">
+    <td>
+      <%= render(:partial => "assets/mini_new_name_only",:object => @dns_cname.asset) %>
+    </td>
+    <td>
+      <%= render(:partial => "mini_cname_detail", :object => @dns_cname) %>
+    </td>
+  </tr>
+</table>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @dns_cname %> |
+<%= link_to 'Back', dns_cnames_path %>

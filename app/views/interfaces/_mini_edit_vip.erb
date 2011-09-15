@@ -1,0 +1,22 @@
+<div id='update-interfaces'>
+<%= error_messages_for :interface %>
+  <p>
+    <b>IP</b><br />
+    <% if mini_edit_vip.interface.nil?%>
+      No IP linked from hoster.
+    <% else %>
+      <%= mini_edit_vip.interface.ip_to_string%>
+    <% end %>
+  </p>
+
+  <%= flash[:interface] %>
+  <%= collection_select("interfaces","interface_id",
+      mini_edit_vip.hoster.non_drac_interfaces.sort{|a,b| a.ip <=> b.ip},
+      "id", :ip_to_string,
+      {},{}) %>
+
+  <%= submit_to_remote 'link','Link',
+                      :url => {:controller => :vips , :action => :link_interface, :id => mini_edit_vip},
+                      :update => 'update-interfaces'
+                      %>
+</div>

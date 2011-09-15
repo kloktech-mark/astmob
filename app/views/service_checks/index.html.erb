@@ -1,0 +1,60 @@
+<%= link_to(image_tag("new.png", :size => "16x16"), new_service_check_path) %>
+<h1>service_checks (<%= @service_checks.length%>)</h1>
+
+<table>
+  <tr>
+    <th><%= image_tag("digg_48.png", :size => "20x20") %><br/>Name</th><!-- Name -->
+    <th><%= image_tag("digg_48.png", :size => "20x20") %><br/>New Name</th><!-- New Name -->	
+	<th><%= image_tag("spanner_48.png", :size => "20x20") %><br/>Checker</th><!-- Service Checker -->
+	<th><%= image_tag("users_two_48.png", :size => "20x20") %><br/>Parent</th><!-- Parent -->
+<!--	<th><%= image_tag("clock_48.png", :size => "20x20") %><br/>Freq</th> Frequency -->
+<!--	<th><%= image_tag("heart_48.png", :size => "20x20") %><br/>Autofix</th> Autofix -->	
+	<th><%= image_tag("book_48.png", :size => "20x20") %><br/>Command</th><!-- Frequency -->
+  </tr>
+
+<% @service_checks = sort_by_relationship(@service_checks)%>
+<% @service_checks.each do |@service_check| %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+     <%= link_to(image_tag("trashcan.png", :size => "16x16"), { :action => "delete_check", :id => @service_check }, { :confirm => 'Are you sure you want to delete ' + @service_check.name + '?' }) %>
+
+      <%= link_to @service_check.name, edit_service_check_path(@service_check) %>
+    </td>
+	<td>
+		<% a = ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).label rescue nil %>
+		<% b = @service_check.root rescue nil %>
+		<% c = ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).definition rescue nil %>
+		<% def_arr = c.split('!') rescue nil%>
+		<% check_arr = @service_check.definition.split('!') %>
+		<% if not b.nil? %>
+		  <%= b %>
+		<% end %>
+		<% if not a.nil? %>
+		  <%= "_" + a %>
+		<% end %>
+		<% counter = 1 %>
+		<% if ! def_arr.nil?%>
+		  <% def_arr.each do |dd| %>
+		    <% if dd == "$KEY_YES$" %>
+		      <%= "_" + check_arr[counter/6 * 2 - 1].to_s%>
+		    <% end %>
+		  <% counter += 1 %>
+		  <% end %>
+		<% end%>
+	</td>	
+    <td>
+		<%= ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).name rescue nil %>
+	</td>
+	<td>
+		<%= ServiceCheck.find(:first, :conditions => ["id = '#{@service_check.parent_id}'"]).name rescue nil %>
+	</td>	
+	<td>  
+	    	
+	</td>	
+  </tr>
+<% end %>
+</table>
+
+<h1>service_checks (<%= @service_checks.length%>)</h1>
+<%= link_to(image_tag("new.png", :size => "16x16"), new_service_check_path) %>
+<br />

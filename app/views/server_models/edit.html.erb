@@ -1,0 +1,27 @@
+<h1>Editing server_model</h1>
+
+<%= error_messages_for :server_model %>
+
+<% form_for(@server_model) do |f| %>
+  <p>
+    <b>Manufacture</b><br />
+    <%= f.text_field :manufacture %>
+  </p>
+
+  <p>
+    <b>Model</b><br />
+    <%= f.text_field :model %>
+  </p>
+
+  <p>
+    <b>Unit</b><br />
+    <%= f.text_field :unit %>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @server_model %> |
+<%= link_to 'Back', server_models_path %>

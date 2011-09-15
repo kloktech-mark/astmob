@@ -1,0 +1,13 @@
+<p>
+  <b>Name:</b>
+  <%=h @nagios_host_group.name %>
+</p>
+
+<p>
+  <b>Hosts:</b>
+  <%=h @nagios_host_group.hosts %>
+</p>
+
+
+<%= link_to 'Edit', edit_nagios_host_group_path(@nagios_host_group) %> |
+<%= link_to 'Back', nagios_host_groups_path %>

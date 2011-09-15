@@ -1,0 +1,22 @@
+<h1>Editing pdu</h1>
+
+<%= error_messages_for :pdu %>
+
+<% form_for(@pdu) do |f| %>
+ 
+  <%= render (:partial => "assets/mini_edit", :object => @pdu.asset) %>
+
+  <p>
+    <b>Pdu Detail</b><br />
+    <%= f.collection_select("pdu_model_id", PduModel.find(:all), "id", "part_number") %>
+  </p>
+
+  <%= render (:partial => "interfaces/mini_edit", :object => @pdu.asset) %>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @pdu %> |
+<%= link_to 'Back', pdus_path %>

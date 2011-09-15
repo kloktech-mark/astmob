@@ -1,0 +1,33 @@
+<p>
+  <b>Part number:</b>
+  <%=h @pdu_model.part_number %>
+</p>
+
+<p>
+  <b>Manufacture:</b>
+  <%=h @pdu_model.manufacture %>
+</p>
+
+<p>
+  <b>Receptible:</b>
+  <%=h @pdu_model.receptible %>
+</p>
+
+<p>
+  <b>Voltage:</b>
+  <%=h @pdu_model.voltage %>
+</p>
+
+<p>
+  <b>Ampere:</b>
+  <%=h @pdu_model.ampere %>
+</p>
+
+<p>
+  <b>Wattage:</b>
+  <%=h @pdu_model.wattage %>
+</p>
+
+
+<%= link_to 'Edit', edit_pdu_model_path(@pdu_model) %> |
+<%= link_to 'Back', pdu_models_path %>

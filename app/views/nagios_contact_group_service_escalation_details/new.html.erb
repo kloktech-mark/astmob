@@ -1,0 +1,21 @@
+<h1>New nagios_contact_group_service_escalation_detail</h1>
+
+<%= error_messages_for :nagios_contact_group_service_escalation_detail %>
+
+<% form_for(@nagios_contact_group_service_escalation_detail) do |f| %>
+  <p>
+    <b>Nagios contact group</b><br />
+    <%= f.text_field :nagios_contact_group_id %>
+  </p>
+
+  <p>
+    <b>Nagios service escalation</b><br />
+    <%= f.text_field :nagios_service_escalation_id %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', nagios_contact_group_service_escalation_details_path %>

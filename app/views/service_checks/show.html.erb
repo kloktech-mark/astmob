@@ -1,0 +1,33 @@
+<p>
+  <b>Name:</b>
+  <%=h @service_check.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @service_check.description.capitalize %>
+</p>
+
+<p>
+  <b>Name Root:</b>
+  <%=h @service_check.root %>
+</p>
+
+
+<p>
+  <b>Service Checker:</b>
+  <%= ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).name %>
+</p>
+
+<p>
+  <b>Parent:</b>
+  <%= ServiceCheck.find(:first, :conditions => ["id = '#{@service_check.parent_id}'"]).name %>
+</p>
+
+<p>
+  <b>Definition:</b>
+  <%=h @service_check.definition %>
+</p>
+ 
+<%= link_to 'Edit', edit_service_check_path(@service_check) %> |
+<%= link_to 'Back', service_checks_path %>

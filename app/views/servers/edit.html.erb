@@ -1,0 +1,60 @@
+<!-- <%= button_to "Provision to Differnt Vlan", :action => 'provision', :id => @server %> -->
+<%= error_messages_for :server %>
+
+<% form_for(@server) do |f| %>      
+<%= render(:partial => "misc_flash/mini_edit") %>
+<table>
+  <tr valign="top">
+    <td> 	
+      <%= render(:partial => "assets/mini_edit",:object => @server.asset) %>
+      <%= render(:partial => "interfaces/mini_edit",:object => @server.asset) %>
+    </td>
+    <td>
+	        
+      <p>
+        <b>Vendor Service Tag</b><br />
+        <%= @server.service_tag %>
+      </p>
+	  
+      <p>
+        <b>BIOS Version</b><br />
+        <%= @server.bios_version %>
+      </p>	  
+
+      <p>
+        <b>Server Model</b><br />
+        <%= @server.server_model.manufacture + " " + @server.server_model.model rescue nil%>
+      </p>	  
+	        
+    <!--  <p>
+        <b>Server Model</b><br />
+        <%= f.collection_select("server_model_id", ServerModel.find(:all), "id", "model") %>
+      </p> -->
+	  
+      <%= render(:partial => "cpu_details/mini_edit",:object => @server.asset) %>    
+      <%= render(:partial => "memory_details/mini_edit",:object => @server.asset) %>    
+      <%= render(:partial => "disk_details/mini_edit",:object => @server.asset) %>
+      <!-- <%= render(:partial => "assets/mini_history",:object => @server.asset) %> -->
+      <br/><br/>
+      <%= render(:partial => "audits/audits",:object => @server.asset) %>
+	  	  
+    </td>
+  </tr>
+  
+</table>
+
+ <br/>     
+  <p>
+    <%= f.submit "Save Changes" %> &nbsp;
+    <%= submit_to_remote 'update_from_ocs_host','Update from OCS?',
+                        :url => {:controller => 'servers' , :action => :update_from_ocs, :id => @server}                         
+                        %>
+    &nbsp;
+    <%= link_to '[Delete This Server?]', @server, :confirm => 'Are you sure?', :method => :delete %> 
+  </p>
+<% end %>
+
+<%= link_to 'Show', @server %> |
+<%= link_to 'Back', servers_path %>
+
+

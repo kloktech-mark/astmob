@@ -1,0 +1,91 @@
+<h1>(Editing) Service_Check: <b><%= @service_check.name %></b></h1>
+<br />
+
+<%= error_messages_for :service_check %>
+
+<% form_for(@service_check) do |f| %>
+  <p>
+    <%= image_tag("digg_48.png", :size => "16x16") %><b>Name:</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <%= image_tag("image_48.png", :size => "16x16") %><b>Description:</b><br />
+    <%= f.text_field :description %>
+  </p> 
+
+  <p>
+    <%= image_tag("digg_48.png", :size => "16x16") %><b>Name Root: (Unique Identifier for the service check's final name)</b><br />
+    <%= f.text_field :root %>
+  </p>
+   
+<!--
+  <p>
+    <%= image_tag("clock_48.png", :size => "16x16") %><b>Frequency:</b><br />
+    <%= f.text_field :frequency %>
+  </p>  
+-->  
+  <p>
+    <%= f.submit "Save Changes" %>
+  </p>
+  <br>
+  <p>
+   <%= image_tag("spanner_48.png", :size => "16x16") %><b>Saved Service Checker:</b> <div id='current-checker' style="color:#FF3300">
+	<%= ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).name rescue nil%></div><br />
+	<b>Available Choices</b><br />
+      <%= collection_select("service_checkers","service_checker_id", ServiceChecker.find(:all, :order => "name"), "id", "name", 
+          {},{:multiple => false, :size => 7}) %><br>
+		  
+    <%= submit_to_remote 'update_service_checker','Update Service Checker',
+                        :url => {:controller => :service_checks , :action => :update_service_checker, :id => @service_check},
+                        :update => 'update-service-checker'
+                        %>		  	
+  </p>
+  <p>
+  	<br>
+    <%= image_tag("users_two_48.png", :size => "16x16") %><b>Saved Parent:</b> <div id='current-check-parent' style="color:#FF3300">
+	<%= ServiceCheck.find(:first, :conditions => ["id = '#{@service_check.parent_id}'"]).name rescue nil%></div><br />
+	<b>Available Choices</b><br />
+      <%= collection_select("service_checks","parent_id", ServiceCheck.find(:all, 
+          :conditions => "id NOT IN ( #{@service_check.parent_id}, #{@service_check.id} )", :order => "name"), "id", "name", 
+          {},{:multiple => false, :size => 7}) %><br>
+		  
+    <%= submit_to_remote 'update_service_check_parent','Update Service Check Parent',
+                        :url => {:controller => :service_checks , :action => :update_service_check_parent, :id => @service_check},
+                        :update => 'update-service-check-parent'
+                        %>		  	
+  </p>
+
+  <p>
+	<%= observe_field :service_checkers_service_checker_id,
+		:frequency => 0.25,
+		:update => 'update-service-checker',
+		:url => { :action => :create_dynamic_fields, :id => @service_check, :observed_field => @service_check.parent_id },
+		:with => 'watched'
+	%>
+  </p> 
+
+  <p>
+  	<br>
+  	<%= image_tag("book_48.png", :size => "16x16") %><b>Saved Check Command:</b>
+	<div id='implode-definition'>
+	<% @check_command = build_check_command(@service_check) rescue nil %>
+	<%= render(:partial => "implode_definition",:object => [@service_check, @check_command]) %>
+	</div>
+  </p>
+
+  <br/>
+  <p>
+  	<%= link_to_function "Toggle Service Definition", update_page { |page| page.visual_effect :toggle_blind, 'create-dynamic-fields' } %>
+  </p>
+	
+    <div id='update-service-checker'>
+	<%= render(:partial => "create_dynamic_fields",:object => @service_check) %>
+	</div>
+  	
+<% end %>
+
+<%= link_to 'Show', @service_check %> |
+<%= link_to 'Back', service_checks_path %>
+	
+

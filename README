@@ -1,0 +1,41 @@
+== Prerequiste
+
+gems:
+- netaddr
+- snmp
+- will_paginate
+- mysql
+
+*note*: 
+To install mysql on OSX, use following command
+
+export ARCHFLAGS="-arch i386 -arch x86_64" ; gem install --no-rdoc --no-ri mysql -- --with-mysql-dir=/opt/local/lib/mysql5 --with-mysql-config=/opt/local/lib/mysql5/bin/mysql_config
+
+
+plugins:
+- act_as_solr, to install, it requires git utility and patch rail plugins.rb using this diff, 
+http://dev.rubyonrails.org/changeset/9049?format=diff&new=9049
+- Update on act_as_solr, we now check in act_as_solr into ast's source, so no longer need to install it manually.
+
+== Installing AST
+- Add "-s user_name" if your user on current system isn't the same as destination
+
+- run `cap -T` to see all the tasks you can run with capistrano.  Run `cap deploy:setup` to setup deployment directories.  
+
+- Run `cap deploy:cold` to deploy everything from scratch.  
+
+- Run `cap deploy` afterward to update and restart app. 
+
+== Initialize DB or Reset
+- rake db:migrate:reset RAILS_ENV=production ( Remove RAILS_ENV if using in dev )
+
+== Starting Application
+
+- Start ast, /etc/init.d/ast start
+
+- Start solr index server, rake solr:start
+
+test release branch again
+
+== Maintenance ==
+- Rebuild solr index, rake solr:reindex

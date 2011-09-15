@@ -1,0 +1,64 @@
+<%= link_to 'New server', new_server_path %>
+<h1>Listing <%= @servers.length %> servers</h1>
+
+<%= will_paginate @servers %>
+<table>
+  <tr>
+    <th>Asset</th>
+    <th>Memory</th>
+    <th>Model</th>
+    <th>Service Tag</th>
+    <th>Storage</th>
+    <th>IP</th>
+
+  </tr>
+
+<% for server in @servers %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+    <%= link_to '[x]', server, :confirm => 'Are you sure?', :method => :delete %> | 
+    <%= link_to server.name, edit_server_path(server) %>
+    </td>
+    
+
+    <!--<td><%=h server.asset.name rescue nil %></td>-->
+    <td><%=h server.asset.memory_models.sum(:capacity) rescue nil %></td>
+    <td><%=h server.server_model.model rescue nil %></td>
+    <td><%=h server.service_tag rescue nil %></td>
+    <td>
+      
+       <table>
+       <% for o in server.asset.disk_details %>
+        <tr>
+          <td><b><%= o.disk_model.name %></b></td>
+          <td><%= o.disk_model.part_number %></td>   
+          <td><%= o.disk_model.capacity %>MB</td>
+        </tr>
+      <% end %>
+      </table>
+
+    </td>
+    
+
+    <td>
+      <table>
+        <% for o in server.asset.interfaces %>
+         <tr>
+          <td><%= o.ip_to_string %></td>
+         </tr>
+    
+        <% end %>
+      </table>
+    </td>
+<!--    <td><%= link_to 'Provision', { :action => "provision", :id => server} %></td>
+    <td><%= link_to 'Edit', edit_server_path(server) %></td>
+    <td><%= link_to 'Destroy', server, :confirm => 'Are you sure?', :method => :delete %></td>
+    -->
+  </tr>
+<% end %>
+</table>
+<%= will_paginate @servers %>
+
+<br />
+
+<%= link_to 'New server', new_server_path %>

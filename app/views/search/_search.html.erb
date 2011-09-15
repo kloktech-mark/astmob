@@ -1,0 +1,20 @@
+<% if  @results.nil? || @results.total < 1 %>
+   <ul class="autocomplete_list">
+   <li class="autocomplete_item">No Matches</li>
+  </ul>
+<% else %>
+ 
+   <ul class="autocomplete_list">
+ 
+  <% @results.records.each do |a| %>
+    <% if !a.nil? %>
+      <% if a.respond_to?('asset') %>
+        <% a = a.asset%>
+      <% end %>
+      <li class="autocomplete_item"><%=h a.name %></li>
+    <% end %>
+  <% end %>
+
+  </ul>
+   
+<% end %>

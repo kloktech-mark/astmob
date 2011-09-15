@@ -1,0 +1,22 @@
+<h1>Listing memory_models</h1>
+
+<table>
+  
+
+<% for memory_models in @memory_models  %>
+  <tr>
+  	
+	<td><%=h memory_models.speed rescue nil %></td>
+    <td><%=h memory_models.mtype rescue nil %></td>
+    <td><%=h memory_models.capacity rescue nil %></td>    
+    <td><%= link_to 'Show', memory_models rescue nil  %></td>
+	<td><%= link_to 'Edit', edit_memory_model_path(memory_models)  rescue nil %></td>
+    <td><%= link_to 'Destroy', memory_models, :confirm => 'Are you sure?', :method => :delete  rescue nil %></td>
+  
+    </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New memory_models', new_memory_model_path %>

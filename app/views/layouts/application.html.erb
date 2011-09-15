@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <title><%= controller.controller_name%> <%= controller.action_name %></title>
+  
+    <!-- Skin CSS files resize.css must load before layout.css -->
+    <link rel="stylesheet" type="text/css" href="/yui/reset-fonts-grids/reset-fonts-grids.css"> 
+  
+    <%= stylesheet_link_tag 'ast' %>
+
+    <%= stylesheet_link_tag('lytebox', :media => :screen) %>
+    
+    <%= stylesheet_link_tag('print', :media => :print) %>
+
+         
+    <%= javascript_include_tag :defaults, :cache => true %>
+
+    <%= javascript_include_tag "lytebox", :cache => "lytebox" %>
+    
+  </head>
+
+  <body onload="document.getElementById('search_search').focus();">
+  
+    <div class="auto_complete" id = 'search_search_auto_complete'>
+      <%= render :partial => 'search/search'%>
+    </div>
+    
+    <div id="top1" align="left">
+      <%= image_tag 'ajax-loader.gif', :id=>'spinner', :style=>"display:none; float:right" %> 
+      <%= image_tag 'ast.png', :style=>"padding: 5px" %>
+    
+      <% form_for(:search, :url => {  :controller => :search, :action => :search} ) do |f| -%>
+    
+        <%= text_field :search, :search, :size => '50'%>
+        <%= f.submit "Search" %>
+      <a href="/search_example.html" rel="lyteframe" title="Search Examples"
+        rev="width: 600px; height: 300px; scrolling: auto;">*help</a>
+      <% end %>    
+ 
+    
+      <%= auto_complete_field :search_search,
+          :url => {:controller => :search, :action => :search},
+          :frequency => 0.7,
+          :min_chars => 3,
+          :indicator => 'spinner'
+          %>
+
+    </div>    
+    
+    <div id = 'left1'>
+    
+      <%= render :partial => "layouts/menu" %>
+       
+    </div>
+    
+    <div id = 'center1'>
+      
+      <p style="color: green"><%= flash[:notice] %></p>
+    
+      <%= yield  %>
+    
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<div id='create-dynamic-fields'">
+
+<br>
+	
+<!-- Get the service checker's current definition to use as default values for the input fields -->
+<% old_check_def = ServiceChecker.find(:first, :conditions => ["id = '#{@service_checker.id}'"]).definition %>
+<% old_check_def_arr = old_check_def.split('!') %>
+  <b> It has this many fields potentially to populate:</b>
+  <% checker_arr = {} %>
+  <% def_arr = {} %>
+  <% checker_arr = old_check_def.split('!') %>
+  <%= b = checker_arr.length / 2 %><br>
+  <% c = checker_arr.length %>
+  <% counter = 0 %>
+  <% while counter < c %>
+  <b>Field Arg:</b>
+  <%= checker_arr[counter] %>
+  <%= hidden_field_tag "def_arr[]", checker_arr[counter], :hidden => true %>
+  <% def_arr[counter] = checker_arr[counter]%>
+  <% counter = counter + 1 %>
+  <% input_arr = {} %>
+  <%= text_area_tag "input_arr[]", old_check_def_arr[counter], :size => 20 %> <%= checker_arr[counter] %><br> 
+  <% def_arr[counter] = checker_arr[counter]%>
+  <% counter = counter + 1 %>
+  <% end %>
+  
+
+   
+    <%= submit_to_remote 'implode_definition','Update Definition',
+                        :url => {:controller => :service_checks , :action => :implode_definition, :id => @service_checker},
+                        :update => 'implode-definition'
+                        %>
+
+</div>

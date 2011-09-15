@@ -1,0 +1,23 @@
+<p>
+  <b>Contact group:</b>
+  <%=h @nagios_service_escalation.contact_group_id %>
+</p>
+
+<p>
+  <b>Host group:</b>
+  <%=h @nagios_service_escalation.host_group_id %>
+</p>
+
+<p>
+  <b>Service description:</b>
+  <%=h @nagios_service_escalation.service_description %>
+</p>
+
+<p>
+  <b>Nagios service escalation template:</b>
+  <%=h @nagios_service_escalation.nagios_service_escalation_template_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_nagios_service_escalation_path(@nagios_service_escalation) %> |
+<%= link_to 'Back', nagios_service_escalations_path %>

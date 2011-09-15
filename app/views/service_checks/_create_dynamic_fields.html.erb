@@ -1,0 +1,79 @@
+<div id='create-dynamic-fields'">
+
+<% @service_check[:observed_field] = @service_check.service_checker_id if @service_check[:observed_field].nil? %>
+	
+<p>
+<!--  <b>This was in the observed field:</b> -->
+
+  <% ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.observed_field}'"]).name rescue nil %>
+</p>
+
+<!--
+<p>
+  <b>This is the Service Checker's definition that was discovered from what's in the observed field:</b>
+  <%= x = ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.observed_field}'"]).definition rescue nil%>
+</p>
+-->
+
+<!-- Get the service check's current definition to use as default values for the input fields -->
+<% old_check_def = @service_check.definition%>
+
+<% old_check_def_arr = old_check_def.split('!') %>
+
+<!--  <b> The checker definition has this many fields:</b> -->
+  <% checker_arr = x.nil? ? [] : x.split('!') %>  <!-- Fields from the checker definition -->
+  <% c = checker_arr.length %><br/>
+  <% def_arr = [] %> <!-- Data from the saved check definition -->
+  <% input_arr = [] %> <!-- Data to be gathered to replace anything old -->
+  <% validation_arr = []%> <!-- Stores validation criteria -->
+  <% checker_counter = 0 %> <!-- Use this to step through the checker definition array -->
+  <% check_counter = 0 %> <!-- Use this to step through the old check definition array. -->
+  <% validation_counter = 0 %> <!-- Use this to step through the validation array. -->
+
+  <% while checker_counter < c %>
+<!--    <b>Field Args:</b><br/> -->
+    <!-- ident -->
+    <%= checker_arr[checker_counter] %>
+    <%= hidden_field_tag "def_arr[]", checker_arr[checker_counter], :hidden => true %>
+    <% def_arr[checker_counter] = checker_arr[checker_counter]%>
+    <% checker_counter = checker_counter + 1 %>
+	<% check_counter = check_counter + 1 %>
+    <!-- req_cbox -->
+    <% checker_counter = checker_counter + 1 %>  	
+    <!-- switch_cbox -->
+	<% if checker_arr[checker_counter] == '$FLAG$' %>
+	  <% if old_check_def_arr[(checker_counter + 4)/3 - 1] == "$FLAG_ON$" %>
+	    <%= check_box_tag "def_arr[]", "$FLAG_ON$", true %>
+	  <% else %>
+	    <%= check_box_tag "def_arr[]", false %> 
+      <% end %> 
+	  Mark checkbox to enable this flag.<br/>
+	<% else %>
+      <%= text_field_tag "input_arr[]", old_check_def_arr[check_counter], :size => 32 %><br/> 
+      <% def_arr[check_counter] = checker_arr[checker_counter]%>	
+	<% end %>	
+    <%= hidden_field_tag "def_arr[]", checker_arr[checker_counter], :hidden => true %>
+    <% def_arr[checker_counter] = checker_arr[checker_counter]%>
+    <% checker_counter = checker_counter + 1 %> 
+	<% check_counter = check_counter + 1 %> 
+    <!-- validation: Store the validation criteria to be used in the controller. -->
+	<%= hidden_field_tag "validation_arr[]", checker_arr[checker_counter], :hidden => true %>
+
+	<% checker_counter = checker_counter + 1 %>
+    <!-- long_desc: Echo this out to provide direction. -->
+	Description:
+    <%= checker_arr[checker_counter] %>
+    <% checker_counter = checker_counter + 1 %> 
+	<!-- Advance counter by one to ignore the name_key column -->
+	<% checker_counter = checker_counter + 1 %>
+	<br/>  
+  <% end %>
+  
+
+   
+    <%= submit_to_remote 'implode_definition','Update Definition',
+                        :url => {:controller => :service_checks , :action => :implode_definition, :id => @service_check},
+                        :update => 'implode-definition'
+                        %>
+
+</div>

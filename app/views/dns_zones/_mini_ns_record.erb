@@ -1,0 +1,38 @@
+<div id='update-dns-ns-records'>
+  <p>
+    <b>NS Record</b><br />
+    <table>
+      <tr>
+        <th>name</th>
+      </tr>
+        
+      <% for o in mini_ns_record.dns_ns_records %>
+        <tr class=<%= cycle('row_odd','row_even')%> >
+          <td>
+          <%= link_to_remote '[x]',
+                      :url => {:controller => 'dns_zones', :action => :destroy_ns_record, :id => o},
+                      :update => 'update-dns-ns-records',
+                      :confirm => 'Are you sure?',
+                      :method => :delete
+                      %>
+           <%= o.name %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </p>     
+  <fieldset><legend>Add NS Record</legend>
+
+    <table>
+      <tr>
+        <td>Name:</td><td><%= text_field :dns_ns_record, :name , :size => '15'%></td>
+      </tr>
+     
+    </table>
+         
+    <%= submit_to_remote 'add','Add',
+                       :url => {:controller => 'dns_zones' , :action => :create_ns_record, :id => mini_ns_record},
+                       :update => 'update-dns-ns-records'
+                       %>
+  </fieldset>
+</div>

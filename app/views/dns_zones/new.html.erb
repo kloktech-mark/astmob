@@ -1,0 +1,52 @@
+<h1>New dns_zone</h1>
+
+<%= error_messages_for :dns_zone %>
+
+<% form_for(@dns_zone) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Inherit</b><br />
+    <%= f.collection_select(:inherit, DnsZone.find(:all, :order => :name), "id", "name", :include_blank => true) %>
+
+  </p>
+
+  <p>
+    <b>Ttl</b><br />
+    <%= f.text_field :ttl %>
+  </p>
+
+  <p>
+    <b>Soa</b><br />
+    <%= f.text_field :soa %>
+  </p>
+
+  <p>
+    <b>Refresh</b><br />
+    <%= f.text_field :refresh %>
+  </p>
+
+  <p>
+    <b>Retry</b><br />
+    <%= f.text_field :retry %>
+  </p>
+
+  <p>
+    <b>Expire</b><br />
+    <%= f.text_field :expire %>
+  </p>
+
+  <p>
+    <b>Minimum</b><br />
+    <%= f.text_field :minimum %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', dns_zones_path %>

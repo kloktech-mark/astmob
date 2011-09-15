@@ -1,0 +1,34 @@
+<h1>Editing nagios_service</h1>
+
+<%= error_messages_for :nagios_service %>
+
+<% form_for(@nagios_service) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Template</b><br />
+      <!-- Make sure foreign key is an integer -->
+      <%= collection_select(:nagios_service,"nagios_service_template_id", NagiosServiceTemplate.find(:all, :order => :name), :id, :name) %>
+
+  </p>
+
+  <p>
+    <b>Check command</b><br />
+    <%= f.text_field :check_command , :size => 60%>
+  </p>
+
+  <p>
+    <b>Description</b><br />
+    <%= f.text_field :description , :size => 60%>
+  </p>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @nagios_service %> |
+<%= link_to 'Back', nagios_services_path %>

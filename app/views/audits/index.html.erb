@@ -1,0 +1,116 @@
+<h1>Recent Changes</h1>
+
+<%= will_paginate @audits %>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>User</th>
+    <th>Action</th>
+    <th>Time</th>
+    <th width="250">Changes</th>
+  </tr>
+
+<% for audit in @audits %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+      <% if audit.auditable_type == 'Asset' %>
+        <%= link_to audit.auditable.name, edit_polymorphic_path(audit.auditable.resource) rescue nil%>
+      <% elsif audit.auditable_type == 'Interface' %>
+        <% if ! audit.auditable_parent.nil? %>
+          <%= link_to audit.auditable_parent.name, edit_polymorphic_path(audit.auditable_parent.resource) rescue nil%>
+        <% else %>
+          <% for change in audit.changes%>
+            <% if change[0] == 'asset_id' %>
+              <%= link_to Asset.find(change[1]).name, edit_polymorphic_path(Asset.find(change[1]).resource) rescue nil%>
+            <% end %>
+          <% end %>
+        <% end %>
+        <% if audit.action == 'update' and ! audit.auditable.nil?%>
+          (<%= audit.auditable.ip_to_string %>)
+        <% end %>
+      <% elsif audit.auditable_type == 'DnsCnameDetail' %>
+        <% for change in audit.changes%>
+          <% if change[0] == 'dns_cname_id' %>
+            <%= link_to DnsCname.find(change[1]).name, edit_dns_cname_path(DnsCname.find(change[1])) rescue nil%>
+          <% end %>
+        <% end %> 
+      <% else %>
+        <%= link_to audit.auditable.name, edit_polymorphic_path(audit.auditable) rescue nil%>
+
+        <!-- <%=h audit.auditable.name rescue nil%> -->  
+      <% end %>    
+    </td>
+    <td>
+      <% if audit.auditable_type == 'Asset' %>
+        <%=h audit.auditable.resource_type rescue nil%>
+      <% else %>
+        <% if audit.auditable_type == 'DnsCnameDetail' %>
+          Point Cname
+        <% else %>
+          <%=h audit.auditable_type %>
+        <% end %>
+      <% end %>
+    </td>
+    <td><%=h audit.username %></td>
+    <td>
+      
+      <% if audit.action == 'destroy' %>
+        <font color="red">
+      <% elsif audit.action == 'create' %>
+        <font color="green">  
+      <% else %>
+        <font>
+      <% end %>
+      
+      <%=h audit.action.capitalize %>
+      
+      </font>
+    </td>
+    <td><%=h audit.created_at.strftime("%H:%M %m/%d/%y") %></td>
+    <td>
+      <% for change in audit.changes %> 
+        <% if audit.action == 'update' %>  
+          <% if change[0] == 'interface_id' %>            
+          <b> IP </b> [ <%=h Interface.find(change[1][0]).ip_to_string rescue nil%> => <%=h Interface.find(change[1][1]).ip_to_string rescue nil%> ]
+            <br/>
+          <% elsif change[0] == 'hoster_id' %>            
+          <b> Hoster </b> [ <%=h Asset.find(change[1][0]).name rescue nil%> => <%=h Asset.find(change[1][1]).name rescue nil%> ]
+            <br/>
+          <% else %>
+            <b><%=h change[0] %></b> ["<%=h change[1][0]%>" <font color="red"><b>=></b></font> "<%=h change[1][1]%>"]
+            <br/>
+          <% end %>
+        <% else %>
+          <% if audit.auditable_type == 'Interface' %>
+            <% if change[0] == 'vlan_detail_id' %>
+              <%=h change[0] %> = <%=h VlanDetail.find(change[1]).vlan.name%>
+              <br/>
+            <% elsif change[0] == 'ip' %>
+              <%=h change[0] %> = <%=h Interface.i_to_ip(change[1]) %>
+              <br/>
+            <% elsif change[0] == 'asset_id' or change[0] == 'real_ip' or change[0] == 'description' %>  
+            <% else %>
+              <%=h change[0] %> = <%=h change[1]%>
+              <br/>
+            <% end %>
+          <% elsif audit.auditable_type == 'DnsCnameDetail' %>
+            <% if change[0] == 'asset_id' %>
+              Asset = <%=h Asset.find(change[1]).name rescue nil%>
+              <br/>
+            <% end %>         
+
+          <% else %>
+            <%=h change[0] %> = <%=h change[1]%>
+            <br/>
+          <% end %>
+        <% end %>          
+        
+      <% end %>
+    </td>    
+  </tr>
+<% end %>
+</table>
+<%= will_paginate @audits %>
+
+

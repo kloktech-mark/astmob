@@ -1,0 +1,28 @@
+<h1>Nagios Services</h1>
+<%= link_to 'New nagios service', new_nagios_service_path %>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Use</th>
+    <th>Check command</th>
+	<th>Description</th>
+  </tr>
+
+<% for nagios_service in @nagios_services %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+      <%= link_to '[X]', nagios_service, :confirm => 'Are you sure?', :method => :delete %> 
+      
+      <%= link_to truncate(nagios_service.name,30), edit_nagios_service_path(nagios_service) %></td>
+
+    <td><%=h nagios_service.nagios_service_template.name rescue nil %></td>
+    <td><%=h truncate(nagios_service.check_command,30) %></td>
+	<td><%=h truncate(nagios_service.description,60) %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+

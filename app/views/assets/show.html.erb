@@ -1,0 +1,26 @@
+
+<p>
+  <b>Name:</b>
+  <%=h @asset.name %>
+</p>
+
+<p>
+  <b>Colo:</b>
+  <%=h @asset.colo.name %>
+</p>
+
+
+<p>
+  <b>Memory:</b>
+  <% for memory in @asset.memories %>
+    <li><%= memory.type %></li>
+    <li><%= memory.speed %></li>
+    <li><%= memory.capacity %></li>
+  <% end %>
+</p>
+
+
+
+
+<%= link_to 'Edit', edit_asset_path(@asset) %> |
+<%= link_to 'Back', assets_path %>

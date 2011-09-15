@@ -1,0 +1,41 @@
+<h1>New service_container</h1>
+
+<%= error_messages_for :service_container %>
+
+<% form_for(@service_container) do |f| %>
+  <p>
+    <%= image_tag("digg_48.png", :size => "16x16") %><b>Name:</b><br />
+    <%= f.text_field :name %>
+  </p>
+  
+  <p>
+    <%= image_tag("image_48.png", :size => "16x16") %><b>Description:</b><br />
+    <%= f.text_field :description %>
+  </p>  
+
+  <p>
+	<%= image_tag("clock_48.png", :size => "16x16") %><b>Frequency:</b> defaults to 300 secs<br />
+    <%= f.hidden_field :frequency, :value => '300' %>
+  </p>
+
+  <p>
+    <%= image_tag("phone.png", :size => "16x16") %><b>Nagios Service Template</b><br />
+	<%= f.collection_select("nagios_service_template_id", NagiosServiceTemplate.find(:all).sort{|a,b| a.name<=>b.name}, :id, :name) %>
+  </p>
+
+  <p>
+    <%= image_tag("computer_48.png", :size => "16x16") %><b>Check Command:</b> defaults to 'check_passive_dummy'<br />
+    <%= f.hidden_field :check_command, :value => 'check_passive_dummy' %>
+  </p>
+
+  <p>
+    <%= image_tag("heart_48.png", :size => "16x16") %><b>Autofix Override:</b><br />
+    <%= f.text_field :autofix %>
+  </p>
+    
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', service_containers_path %>

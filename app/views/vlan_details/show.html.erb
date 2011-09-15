@@ -1,0 +1,18 @@
+<p>
+  <b>Colo:</b>
+  <%=h @vlan_detail.colo_id %>
+</p>
+
+<p>
+  <b>Vlan:</b>
+  <%=h @vlan_detail.vlan_id %>
+</p>
+
+<p>
+  <b>Subnet:</b>
+  <%=h @vlan_detail.subnet %>
+</p>
+
+
+<%= link_to 'Edit', edit_vlan_detail_path(@vlan_detail) %> |
+<%= link_to 'Back', vlan_details_path %>

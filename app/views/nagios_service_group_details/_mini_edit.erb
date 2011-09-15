@@ -1,0 +1,61 @@
+<div id='update-nagios-service-group'>
+
+<p>
+  <b>Services</b><br />
+
+  <table>
+    <tr>
+      <th>Hostgroups</th>
+      <th>Services</th>
+    </tr>
+    <% for detail in mini_edit.nagios_service_group_details %>
+    <tr class=<%= cycle('row_odd','row_even')%> >
+      <td>
+        <%= link_to_remote '[x]',
+                  :url => {:controller => 'nagios_service_group_details', :action => :destroy_ajax, :id => detail},
+                  :update => 'update-nagios-service-group',
+                  :confirm => 'Are you sure?',
+                  :method => :delete
+                  %>          
+        <%= detail.nagios_host_group.name %>
+      </td>
+      <td>
+        <%= detail.nagios_service.name %>
+      </td>
+    </tr>
+          
+    <% end %>
+  </table>
+</p>  
+
+
+<fieldset><legend>Add New Service</legend>
+  <table>
+    <tr>
+      <th>Hostgroup</th>
+      <th>Service</th>
+    </tr>
+    <tr>
+      <td>
+        
+        <%= collection_select("nagios_service_group_details","nagios_host_group_id", NagiosHostGroup.find(:all, :order => :name), "id", "name", 
+            {:include_blank => true},
+            {:onChange => "new Ajax.Updater('service_group_services', '/nagios_service_groups/get_services/#{mini_edit.id}', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this.form) + '&amp;authenticity_token=' + encodeURIComponent('#{form_authenticity_token}')}); return false;"}) 
+        %>
+      </td>
+      
+      <td>
+        <%= render(:partial => "nagios_service_group_details/mini_service_select",:object => []) %>    
+      </td>          
+      
+
+    </tr>
+   
+  </table>  
+  
+  <%= submit_to_remote 'add','Add',
+                      :url => {:controller => 'nagios_service_groups' , :action => :add_details, :id => mini_edit},
+                      :update => 'update-nagios-service-group'
+                      %>  
+</fieldset>
+</div>

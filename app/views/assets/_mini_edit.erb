@@ -1,0 +1,37 @@
+<%= error_messages_for :asset %>
+
+<% fields_for mini_edit do |f| %> 
+ 
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+    <%= f.error_message_on (:name) %>
+  </p>
+
+  <table>
+    <tr>
+      <th>Colo</th>
+      <th>Row</th>
+      <th>Rack</th>
+      <th>Pos</th>
+    </tr>
+    <tr>
+      <td><%= f.collection_select("colo_id", Colo.find(:all), "id", "name") %></td>
+      <td><%= f.text_field (:row, {:size => "1"}) %></td>
+      <td><%= f.text_field (:rack, {:size => "1"}) %></td>
+      <td><%= f.text_field (:pos, {:size => "1"}) %></td>
+    </tr>
+  </table>
+  <p>
+    <b>Asset Tag</b><br />
+    <%= f.text_field :asset_tag, :size => "5" %>
+  </p>
+  
+  <p>
+    <b>Note</b><br />
+    <%= f.text_area(:note, :rows => "5", :cols => "30") %>
+  </p>
+
+
+<% end %>
+

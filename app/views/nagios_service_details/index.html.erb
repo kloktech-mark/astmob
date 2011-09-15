@@ -1,0 +1,30 @@
+<h1>Listing nagios_service_details</h1>
+
+<table>
+  <tr>
+    <th>Nagios service</th>
+    <th>Nagios host group</th>
+  </tr>
+
+<% for nagios_service in NagiosService.find(:all, :order => :name) %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td><%=h nagios_service.name rescue nil %></td>
+    <td>
+      <% nagios_service.nagios_service_details.sort{|a,b| a.nagios_host_group.name <=> b.nagios_host_group.name}.each do |service_detail| %>
+
+        <%= link_to '[x]', service_detail, :confirm => 'Are you sure you want to delete Nagios hostgroup: ' + service_detail.nagios_host_group.name + '?', :method => :delete %>
+        <%=h service_detail.nagios_host_group.name rescue nil %>
+		<br/>
+      <% end %>
+      
+      
+    </td>
+
+  </tr>
+<% end %>
+
+</table>
+
+<br />
+
+<%= link_to 'New nagios_service_detail', new_nagios_service_detail_path %>

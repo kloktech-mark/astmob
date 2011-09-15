@@ -1,0 +1,23 @@
+<p>
+  <b>Name:</b>
+  <%=h @disk_model.name %>
+</p>
+
+<p>
+  <b>Speed:</b>
+  <%=h @disk_model.speed %>
+</p>
+
+<p>
+  <b>Capacity:</b>
+  <%=h @disk_model.capacity %>
+</p>
+
+<p>
+  <b>Part number:</b>
+  <%=h @disk_model.part_number %>
+</p>
+
+
+<%= link_to 'Edit', edit_disk_model_path(@disk_model) %> |
+<%= link_to 'Back', disk_models_path %>

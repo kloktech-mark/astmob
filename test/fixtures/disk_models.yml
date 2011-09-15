@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  speed: 1
+  capacity: 1
+  part_number: MyString
+
+two:
+  name: MyString
+  speed: 1
+  capacity: 1
+  part_number: MyString

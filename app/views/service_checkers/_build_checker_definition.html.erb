@@ -1,0 +1,115 @@
+<div id='build-checker-definition'>
+
+<br/>
+<%= image_tag("book_48.png", :size => "16x16") %><b>Definition:</b><br/>
+
+	
+	<% if @service_checker.definition == '' %>
+	  Undefined
+	  <br/>
+	<% else %>		
+	  <%= link_to(image_tag("trashcan.png", :size => "16x16"), { :action => "del_definition", :id => @service_checker },
+			{ :confirm => "Are you sure you want to delete the definition? Clicking on 'OK' will permanently delete it from the database!" }) %>
+	  <b>Delete Entire Definition</b> 	
+      <table>
+        <tr>
+          <th></th>
+          <th>Identifier</th>
+          <th>Required</th>
+          <th>Switch</th>
+          <th>Validation</th>
+		  <th>Description</th>
+		  <th>Key</th>
+        </tr>
+
+	    <% def_array = @service_checker.definition.split('!')%>
+	    <% pass = 0 %>
+	    <% while pass < def_array.length/6 %>
+	      <tr class=<%= cycle('row_odd','row_even')%> >
+		  <td>
+	        <%= link_to(image_tag("trashcan.png", :size => "12x12"), { :action => "del_def_arg", :id => @service_checker, :pass => pass, :def => def_array },
+			{ :confirm => "Are you sure you want to delete this line item? Clicking on 'OK' will permanently delete it from the definition!" }) %>		  	
+		  </td>
+	      <td><center>
+	        <!-- Identifier -->
+			<%= text_field_tag "prev_input_arr[]", def_array[pass*6], :size => 2 %>
+	      </center></td>
+	      <td><center>
+	        <!-- Required -->
+	  	    <% if def_array[pass*6+1] == "$REQ$" %>
+			  <%= select_tag "prev_input_arr[]", "<option>N</option><option selected='selected'>Y</option>" %>
+			<% else %>
+			  <%= select_tag "prev_input_arr[]", "<option selected='selected'>N</option><option>Y</option>" %>
+			<% end %>
+	      </center></td>
+	      <td><center>
+	        <!-- Switch -->
+	  	    <%if def_array[pass*6+2] == "$FLAG$" %>
+			  <%= select_tag "prev_input_arr[]", "<option>Arg</option><option selected='selected'>Flag</option>" %> 
+			<% else %>
+			  <%= select_tag "prev_input_arr[]", "<option selected='selected'>Arg</option><option>Flag</option>" %>
+			<% end %>
+	      </center></td>
+	      <td><center>
+	        <!-- Validation -->
+	  	    <% if def_array[pass*6+3] == "$NONE$" %>
+			  <%= select_tag "prev_input_arr[]", "<option selected='selected'>none</option><option>numeric</option><option>text</option>" %>
+			<% elsif def_array[pass*6+3] == "$TEXT$" %>
+			  <%= select_tag "prev_input_arr[]", "<option>none</option><option>numeric</option><option selected='selected'>text</option>" %>
+			<% elsif def_array[pass*6+3] == "$NUMERIC$" %>
+			  <%= select_tag "prev_input_arr[]", "<option>none</option><option selected='selected'>numeric</option><option>text</option>" %>
+			<% end %>
+	      </center></td>
+	      <td>
+	        <!-- Description -->
+	  	    <%  if def_array[pass*6+4] == "$NONE$" %>
+			  <%= text_field_tag "prev_input_arr[]", "[Blank]", :size => 32 %>
+			<% else %>
+			  <%= text_field_tag "prev_input_arr[]", def_array[pass*6+4], :size => 32 %>
+			<% end %>
+	      </td>
+		  <td>
+	        <!-- Name Key -->		  	
+	  	    <% if def_array[pass*6+5] == "$KEY_YES$" %>
+			  <%= select_tag "prev_input_arr[]", "<option>N</option><option selected='selected'>Y</option>" %>
+			<% else %>
+			  <%= select_tag "prev_input_arr[]", "<option selected='selected'>N</option><option>Y</option>" %>
+			<% end %>
+		  </td>
+	      </tr>
+	      <% pass += 1 %>
+	    <% end %>
+	  <% end %>
+	  </table>
+      <%= submit_to_remote 'build_checker_definition','Update Definition',
+                        :url => {:controller => :service_checkers , :action => :edit_definition, :id => @service_checker},
+                        :update => 'build-checker-definition'
+                        %>	  	
+<br/>
+  <fieldset><legend>Add Option</legend>	
+
+
+<p>
+	<b>Identifier:</b><br/>
+	<%= text_field_tag "ident", nil, :size => 4 %> (i.e. -c)<br/>
+	<%= check_box_tag "req_cbox", false %>
+	Required?<br/>
+	
+	<%= check_box_tag "switch_cbox", false %>
+	Takes no arguments?<br/>
+	
+	<b>Validation:</b><br/>
+	<%= select_tag "validation_select", "<option>none</option><option>numeric</option><option>text</option"%><br/>
+		
+	<b>Description:</b><br/>
+	<%= text_area_tag "long_desc", nil, :size => 20 %><br/>
+	
+	<%= check_box_tag "key_cbox", false %>
+	Name key?<br/>
+</p>
+    <%= submit_to_remote 'build_checker_definition','Append to Definition',
+                        :url => {:controller => :service_checkers , :action => :build_definition, :id => @service_checker},
+                        :update => 'build-checker-definition'
+                        %>
+</fieldset>
+</div>

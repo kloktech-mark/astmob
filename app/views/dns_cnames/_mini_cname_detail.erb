@@ -1,0 +1,45 @@
+<div id='update-dns-cname-details'>
+  <p>
+    <b>Pointing To</b><br />
+    <table>
+      <tr>
+        <th>name</th>
+        <th>IP</th>
+      </tr>
+        
+      <% for o in mini_cname_detail.dns_cname_details.sort{|a,b| a.asset.name <=> b.asset.name} %>
+        <tr class=<%= cycle('row_odd','row_even')%> >
+          <td>
+            <%= link_to_remote '[x]',
+                        :url => {:controller => 'dns_cnames', :action => :destroy_cname_detail, :id => o},
+                        :update => 'update-dns-cname-details',
+                        :confirm => 'Are you sure?',
+                        :method => :delete
+                        %>
+             <%= o.asset.name %>
+           </td>
+           <td>
+           <%= o.asset.primary_interface.ip_to_string rescue nil %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </p>     
+  <fieldset><legend>Point to Assets</legend>
+    <% if mini_cname_detail.cname_assets.empty? %>
+      <%= collection_select("cname_assets","asset_id", Asset.find(:all, :order => :name,
+          :conditions => "resource_type != 'DnsCname'"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+   
+    <% else %>
+      <%= collection_select("cname_assets","asset_id", Asset.find(:all, :order => :name,
+          :conditions => "resource_type != 'DnsCname' AND id NOT IN ( #{mini_cname_detail.cname_assets.collect{|a| a.id}.join(',')} )"), 
+          "id", "name", {},{:multiple => true, :size => 7}) %>
+
+    <% end %>         
+    <%= submit_to_remote 'add','Add',
+                       :url => {:controller => 'dns_cnames' , :action => :create_cname_detail, :id => mini_cname_detail},
+                       :update => 'update-dns-cname-details'
+                       %>
+  </fieldset>
+</div>

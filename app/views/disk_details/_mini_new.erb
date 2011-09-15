@@ -1,0 +1,11 @@
+<%= error_messages_for :disk_detail %>
+
+<% fields_for mini_new do |f| %> 
+
+  <p>
+    <b>Disks - Count</b><br />
+    <%= f.collection_select(:disk_model_id, DiskModel.find(:all), "id", "name", {:include_blank => true} ) %> - 
+    <%= f.text_field :cnt , :size => '3'%>
+  </p>
+  
+<% end %>

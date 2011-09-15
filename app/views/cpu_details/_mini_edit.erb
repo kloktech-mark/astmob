@@ -1,0 +1,25 @@
+<div id='update-cpu-details'>
+<%= error_messages_for :cpu_detail %>
+
+  <p>
+  	<table>
+    <br /><b>CPU</b>
+      <tr>
+        <th>Model</th>
+        <th>Speed (MHz)</th>
+		<th>#Cores</th>
+      </tr>
+      <tr>
+          <% for o in mini_edit.cpu_details %>
+		    <% for p in mini_edit.cpu_models %>
+			  <td><%= p.ctype %></td> <td><%= p.speed %></td>
+			<% end %>			 
+			<td><%= o.num_cores %></td>
+          <% end %>		  
+      </tr>
+    </table>  
+	
+
+  </p>
+
+</div>

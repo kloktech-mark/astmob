@@ -1,0 +1,28 @@
+<h1>Listing nagios_service_escalations</h1>
+
+<table>
+  <tr>
+    <th>Host group</th>
+    <th>Service description</th>
+    <th>Use Template</th>
+    <th>Contact group</th>
+    <th>Action</th>
+
+  </tr>
+
+<% for nagios_service_escalation in @nagios_service_escalations %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+
+    <td><%=h nagios_service_escalation.nagios_service_detail.nagios_host_group.name rescue nil %></td>
+    <td><%=h nagios_service_escalation.nagios_service_detail.nagios_service.name rescue nil%></td>
+    <td><%=h truncate(nagios_service_escalation.nagios_service_escalation_template.name,50) %></td>
+    <td><%=h nagios_service_escalation.nagios_contact_groups.collect{|a| a.name}.join(",") %></td>
+    <td><%= link_to 'Edit', edit_nagios_service_escalation_path(nagios_service_escalation) %> | 
+    <%= link_to 'Destroy', nagios_service_escalation, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New nagios_service_escalation', new_nagios_service_escalation_path %>

@@ -1,0 +1,54 @@
+<%= link_to(image_tag("new.png", :size => "16x16"), new_service_checker_path) %>
+<h1>service_checkers (<%= @service_checkers.length%>)</h1>
+
+<table>
+  <tr>
+    <th><%= image_tag("digg_48.png", :size => "20x20") %><br/>Name</th>
+    <th><%= image_tag("image_48.png", :size => "20x20") %><br/>Description</th>
+<!--	
+	<th><%= image_tag("home_48.png", :size => "20x20") %><br/>Home Dir</th>
+	<th><%= image_tag("spanner_48.png", :size => "20x20") %><br/>Command</th>	
+	<th><%= image_tag("star_half_48.png", :size => "20x20") %><br/>Type</th>
+	<th><%= image_tag("lock_open_48.png", :size => "20x20") %><br/>Strictness</th>
+-->
+	<th><%= image_tag("book_48.png", :size => "20x20") %><br/>Definition</th>
+  </tr>
+<% for @service_checker in @service_checkers.sort{|a,b| a.name <=> b.name} %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+<!--    	
+	 <%= link_to(image_tag("trashcan.png", :size => "20x20"), @service_checker, :method => :delete, :confirm => 'Are you sure you want to delete ' + @service_checker.name + '?') %>
+-->
+	  <%= link_to(image_tag("trashcan.png", :size => "16x16"), { :action => "delete_checker", :id => @service_checker },
+			{ :confirm => "Are you sure you want to delete " + @service_checker.name + "? Clicking on 'OK' will permanently delete it from the database!" }) %>
+      <%= link_to @service_checker.name, edit_service_checker_path(@service_checker) %>
+    </td>
+    <td>
+    	<%=h truncate(@service_checker.description.capitalize,60) %>
+	</td>
+<!--	
+    <td>
+    	<%=h truncate(@service_checker.home,60) %>
+	</td>	
+    <td>    	
+    	<%=h truncate(@service_checker.command,60) %>
+	</td>			
+    <td>
+	  	<%= radio_button("service_checker", "checker_type", "0", :disabled => true, :name => @service_checker.name+'checker_type') %> Internal<br />
+  		<%= radio_button("service_checker", "checker_type", "1", :disabled => true, :name => @service_checker.name+'checker_type') %> External<br />
+    </td>
+    <td>
+	  	<%= radio_button("service_checker", "strict", "0", :disabled => true, :name => @service_checker.name+'strict') %> Not Strict<br />
+  		<%= radio_button("service_checker", "strict", "1", :disabled => true, :name => @service_checker.name+'strict') %> Strict<br />	
+    </td>
+-->
+    <td>
+		<%= text_area(:service_checker, :definition, :cols => 60, :rows => 3, :disabled => true, :wrap => 'soft') %>
+    </td>		
+  </tr>
+<% end %>
+</table>
+
+<h1>service_checkers (<%= @service_checkers.length%>)</h1>
+<%= link_to(image_tag("new.png", :size => "16x16"), new_service_checker_path) %>
+<br />

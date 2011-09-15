@@ -1,0 +1,28 @@
+<div id='update-interfaces'>
+<%= error_messages_for :interface %>
+  <p>
+    <b>IP</b><br />
+    <table>
+      <tr>
+        <th>vlan</th>
+        <th>IP</th>
+        <th>ifname</th>
+        <th>mac</th>
+      </tr>
+        
+    <% for o in mini_edit_no_new.interfaces %>
+     <tr class=<%= cycle('row_odd','row_even')%> >
+      <td><%= o.vlan_detail.vlan.name %></td>   
+      <td><%= o.ip_to_string %></td>
+      <td><%= o.name %></td>
+      <td><%= o.mac %></td>
+     </tr>
+    <% end %>
+    </table>
+
+  </p>
+ 
+  
+  
+       
+</div>

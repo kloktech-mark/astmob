@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  vip_id: 1
+  asset_id: 1
+
+two:
+  vip_id: 1
+  asset_id: 1
