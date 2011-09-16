@@ -80,7 +80,9 @@ You might also want to use a deploy script instead of doing `svn checkout` on yo
 
 == Mysql setup ==
 
-Follow the same instruction for dev environment to load schema onto database for production
+Follow the same instruction for dev environment to load schema onto database for production.  
+
+Another way to bootstrap production is to play around in dev environment first then take a sql dump from dev db and export it to production db.
 
 == Deploy ==
 
