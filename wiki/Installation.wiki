@@ -7,8 +7,6 @@ Therefore, we will break installation into two sections, one for dev and one for
 
 Some of the initial setup such as DB setup are the same between dev and production.
 
-AST doesn't require
-
 = Prerequisite =
 
 System requirements:
