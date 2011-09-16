@@ -40,15 +40,13 @@ Assuming current directory is ast/.
 
 DB setup in RoR application is done via rake.  [http://rake.rubyforge.org/ Rake] is basically ruby make.  RoR has sets of defined tasks that can be performed with rake.  Run `rake --tasks` to see all the tasks it can do.
 
-There is one bug with audit extension in RoR which cause initial db setup to fail.  Work around as follow:
+These two mysql lines should be enough to start dev.  Notice database name differs between dev and prod.
+ * `create database ast_development;`
+ * `grant all privileges on ast_development.* TO 'root'@'localhost';`
 
- # Find the line start with "audit DnsZone,....." in app/controllers/application.rb, comment it out with hash(#) at the beginning of the line.
- # Run
-  # `rake db:create`  (Create database)
-  # `rake db:migrate`  (Create all the necessary tables)
- # Uncomment the line in first step.
+Then load the schema
 
-The comment/uncomment is only needed in fresh install.
+rake db:schema:load
 
 == Start ==
 
@@ -80,10 +78,16 @@ Production deployment is different from dev in that they different settings.  In
 
 You might also want to use a deploy script instead of doing `svn checkout` on your production server.  AST uses [https://github.com/capistrano/capistrano/wiki/Documentation-v2.x capistrano](another ruby gem) to do its production deployment.  See config/deploy.rb for the setup.  The file tells capistrano what hosts to install, what rake tasks to perform for install, update, rollback or uninstall.  
 
+== Mysql setup ==
+
+Follow the same instruction for dev environment to load schema onto database for production
+
+== Deploy ==
+
 For first-time deployment, modify config/deploy.rb to match your environment for parameters such as svn repo, installation directory, number of old copies to keep, proxy gateway, and etc.  
 
 Once that's setup, run
-`cap deploy:cold`
+`cap deploy`
 
 Run `cap -T` to see what capistrano can do in AST.
 
