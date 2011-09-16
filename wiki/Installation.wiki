@@ -74,7 +74,7 @@ Now, go to UsageGuide to read about how to start using it.
 
 = Production =
 
-Production deployment is different from dev in that they different settings.  In dev, it's probably OK to use local database.  In production, you might want to use a managed DB where there is periodic backup and some DBA tending it.  And in dev, you want to see change to .rb file reflects right away where in production, for faster execution, change is not reflected until server is restarted. 
+Production deployment is different from dev in that they have different settings.  In dev, it's probably OK to use local database.  In production, you might want to use a managed DB where there is periodic backup and some DBA tending it.  And in dev, you want to see change to .rb file reflects right away where in production, for faster execution, change is not reflected until server is restarted. 
 
 You might also want to use a deploy script instead of doing `svn checkout` on your production server.  AST uses [https://github.com/capistrano/capistrano/wiki/Documentation-v2.x capistrano](another ruby gem) to do its production deployment.  See config/deploy.rb for the setup.  The file tells capistrano what hosts to install, what rake tasks to perform for install, update, rollback or uninstall.  
 
