@@ -1,6 +1,6 @@
 --- 
 # (TODO) Change this to user to run AST as.
-user: example
+user: nobody
 # (TODO) Change this to where AST is installed.
 cwd: /home/example/ast/current
 log_file: log/mongrel.log
