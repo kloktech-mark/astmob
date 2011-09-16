@@ -1,0 +1,31 @@
+#summary Installation instructions.
+#labels Phase-Deploy
+
+= Installation =
+
+Ruby on Rails has notion of dev and production environment which one can have different settings for each.  Very useful as it gives a way to play with new thing without breaking production while still having code check in.
+
+Therefore, we will break installation into two sections, one for dev and one for production.  However, it is NOT mandatory to use production method to run in production, it's just a bit more optimized in things like caching.
+
+Some of the initial setup such as DB setup are the same between dev and production.
+
+= Prerequisite =
+
+System requirements:
+ * ruby 1.8+
+ * mysql 
+ * ruby gem (Gem is like pear for PHP or cpan for Perl.  It lets you install Ruby modules.)
+
+Gems requirements:
+ * rails
+ * netaddr
+ * will_paginate
+ * mysql
+
+Gems can be installed with: `gem install _gemname_`
+
+= Dev  =
+
+Checkout code from source.
+
+svn checkout http://astmob.googlecode.com/svn/trunk/ast ast
