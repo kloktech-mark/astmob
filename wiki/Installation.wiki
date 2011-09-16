@@ -12,7 +12,7 @@ Some of the initial setup such as DB setup are the same between dev and producti
 System requirements:
  * ruby 1.8+
  * mysql 
- * ruby gem (Gem is like pear for PHP or cpan for Perl.  It lets you install Ruby modules.)
+ * [http://rubygems.org/ gem] (Gem is like pear for PHP or cpan for Perl.  It lets you install Ruby modules.  Most distro has it packaged.)
 
 Gems requirements:
  * rails
