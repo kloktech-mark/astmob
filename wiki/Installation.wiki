@@ -93,4 +93,8 @@ In AST, we run it under [http://en.wikipedia.org/wiki/Mongrel_(web_server) Mongr
 
 You'll notice configuration has servers: 8.  Which means it will start 8 mongrel process start from port 4500 to 4507.  In order to use all these process, we need to place some sort of a load balancer in front of these mongrel process.  We use [http://httpd.apache.org/docs/2.0/mod/mod_proxy.html apache2 mod proxy].  
 
-Example apache2 site config is in the [https://code.google.com/p/astmob/source/browse/trunk/apache2/ast source tree].
+[https://code.google.com/p/astmob/source/browse/trunk/apache2/ast  Example apache2 site config] is in the source.
+
+You might want to use init.d start AST.  So you can do something like `/etc/init.d/ast restart`.  Source  also has [https://code.google.com/p/astmob/source/browse/trunk/init.d/ast an example].
+
+
