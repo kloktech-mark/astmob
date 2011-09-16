@@ -97,4 +97,12 @@ You'll notice configuration has servers: 8.  Which means it will start 8 mongrel
 
 You might want to use init.d start AST.  So you can do something like `/etc/init.d/ast restart`.  Source  also has [https://code.google.com/p/astmob/source/browse/trunk/init.d/ast an example].
 
+Quickly recap.   One time setup for production:
+ * Modify config/databases.yml
+ * Modify config/mongrel_cluster.yml
+ * `cap deploy:cold`
+ * Modify apache2 site config
+ * Modify init.d config
 
+After that, additional update is done with:
+ * `cap deploy`
