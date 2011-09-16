@@ -44,7 +44,7 @@ These two mysql lines should be enough to start dev.  Notice database name diffe
  * `create database ast_development;`
  * `grant all privileges on ast_development.* TO 'root'@'localhost';`
 
-Then load the schema
+Then load the [https://code.google.com/p/astmob/source/browse/trunk/ast/db/schema.rb schema]
 
 rake db:schema:load
 
