@@ -1,35 +1,35 @@
 <VirtualHost *:80>
-	ServerAdmin webmaster@localhost
-	ServerName ast.example.com
+  ServerAdmin webmaster@localhost
+  ServerName ast.example.com
 
-	# disable etag since we dont use it.
+  # disable etag since we dont use it.
   FileETag none
 
   # Add expire header 
   ExpiresActive On
   ExpiresDefault "access plus 10 years"
 
-	<Location /balancer-manager>
-	  SetHandler balancer-manager
-	  Order deny,allow
-	  Deny from all
-	  Allow from .telepacific.net localhost .example.com
-	</Location>
+  <Location /balancer-manager>
+    SetHandler balancer-manager
+    Order deny,allow
+    Deny from all
+    Allow from .telepacific.net localhost .example.com
+  </Location>
 
-	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
-	<Directory "/usr/lib/cgi-bin">
-		AllowOverride None
-		Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
-		Order allow,deny
-		Allow from all
-	</Directory>
+  ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+  <Directory "/usr/lib/cgi-bin">
+    AllowOverride None
+    Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Order allow,deny
+    Allow from all
+  </Directory>
 
-	# Possible values include: debug, info, notice, warn, error, crit,
-	# alert, emerg.
-	LogLevel warn
+  # Possible values include: debug, info, notice, warn, error, crit,
+  # alert, emerg.
+  LogLevel warn
 
-	CustomLog "|/usr/sbin/rotatelogs /var/log/apache2/access.log 21600" combined
-	ServerSignature On
+  CustomLog "|/usr/sbin/rotatelogs /var/log/apache2/access.log 21600" combined
+  ServerSignature On
 
    ProxyPass /error !
    ProxyPass /ocsreports !
