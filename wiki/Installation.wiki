@@ -70,7 +70,7 @@ my_bx:ast malin$ script/server
 ** Use CTRL-C to stop.
 }}}
 
-You see that AST is now listening on http://0.0.0.0:3000, go there in your browser and if it works, good job, you have a working AST.
+You see that AST is now listening on http://0.0.0.0:3000, go there in your browser(replace 0.0.0.0 with ip or hostname of the box) and if it works, good job, you have a working AST.
 
 Now, go to UsageGuide to read about how to start using it.
 
