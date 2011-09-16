@@ -1,13 +1,13 @@
 #summary Installation instructions.
 #labels Phase-Deploy
 
-= Installation =
-
-Ruby on Rails has notion of dev and production environment which one can have different settings for each.  Very useful as it gives a way to play with new thing without breaking production while still having code check in.
+AST is written in Ruby on Rails(RoR) and it has a notion of dev and production environment where one can have different settings for each.  Very useful as it gives a way to play with new thing without breaking production while still having code check in.
 
 Therefore, we will break installation into two sections, one for dev and one for production.  However, it is NOT mandatory to use production method to run in production, it's just a bit more optimized in things like caching.
 
 Some of the initial setup such as DB setup are the same between dev and production.
+
+AST doesn't require
 
 = Prerequisite =
 
@@ -18,14 +18,79 @@ System requirements:
 
 Gems requirements:
  * rails
+ * rake
  * netaddr
  * will_paginate
  * mysql
+ * mongrel (Server for RoR)
 
-Gems can be installed with: `gem install _gemname_`
+Gems can be installed with: `gem install _gemname_`.
+
+Verify gems installation with: `gem list --local`
 
 = Dev  =
 
 Checkout code from source.
 
 svn checkout http://astmob.googlecode.com/svn/trunk/ast ast
+
+Assuming current directory is ast/.  
+
+== Mysql Setup ==
+
+DB setup in RoR application is done via rake.  [http://rake.rubyforge.org/ Rake] is basically ruby make.  RoR has sets of defined tasks that can be performed with rake.  Run `rake --tasks` to see all the tasks it can do.
+
+There is one bug with audit extension in RoR which cause initial db setup to fail.  Work around as follow:
+
+ # Find the line start with "audit DnsZone,....." in app/controllers/application.rb, comment it out with hash(#) at the beginning of the line.
+ # Run
+  # `rake db:create`  (Create database)
+  # `rake db:migrate`  (Create all the necessary tables)
+ # Uncomment the line in first step.
+
+The comment/uncomment is only needed in fresh install.
+
+== Start ==
+
+Given DB is created, you can start AST via 
+`script/server`
+and something like this should show up
+{{{
+=> Booting Mongrel (use 'script/server webrick' to force WEBrick)
+=> Rails 2.1.2 application starting on http://0.0.0.0:3000
+=> Call with -d to detach
+=> Ctrl-C to shutdown server
+** Starting Mongrel listening at 0.0.0.0:3000
+** Starting Rails with development environment...
+** Rails loaded.
+** Loading any Rails specific GemPlugins
+** Signals ready.  TERM => stop.  USR2 => restart.  INT => stop (no restart).
+** Rails signals registered.  HUP => reload (without restart).  It might not work well.
+** Mongrel 1.1.5 available at 0.0.0.0:3000
+** Use CTRL-C to stop.
+}}}
+
+You see that AST is now listening on http://0.0.0.0:3000, go there in your browser and if it works, good job, you have a working AST.
+
+Now, go to UsageGuide to read about how to start using it.
+
+= Production =
+
+Production deployment is different from dev in that they different settings.  In dev, it's probably OK to use local database.  In production, you might want to use a managed DB where there is periodic backup and some DBA tending it.  And in dev, you want to see change to .rb file reflects right away where in production, for faster execution, change is not reflected until server is restarted. 
+
+You might also want to use a deploy script instead of doing `svn checkout` on your production server.  AST uses [https://github.com/capistrano/capistrano/wiki/Documentation-v2.x capistrano](another ruby gem) to do its production deployment.  See config/deploy.rb for the setup.  The file tells capistrano what hosts to install, what rake tasks to perform for install, update, rollback or uninstall.  
+
+For first-time deployment, modify config/deploy.rb to match your environment for parameters such as svn repo, installation directory, number of old copies to keep, proxy gateway, and etc.  
+
+Once that's setup, run
+`cap deploy:cold`
+
+Run `cap -T` to see what capistrano can do in AST.
+
+Capistrano basically checkout a copy from defined svn repo, tar them up, ssh to host, untar and execute defined tasks such as `rake db:migrate` or restart server.  In case of `cap deploy:cold`, it does `rake db:create`, `rake db:migrate` and then tries to start server.
+
+In AST, we run it under [http://en.wikipedia.org/wiki/Mongrel_(web_server) Mongrel], a single-threaded web server.  Mongrel configuration is in config/mongrel_cluster.yml.  You will need to update the file with your AST deploy path and user you want mongrel to run as.
+
+You'll notice configuration has servers: 8.  Which means it will start 8 mongrel process start from port 4500 to 4507.  In order to use all these process, we need to place some sort of a load balancer in front of these mongrel process.  We use [http://httpd.apache.org/docs/2.0/mod/mod_proxy.html apache2 mod proxy].  
+
+Example apache2 site config is in the [https://code.google.com/p/astmob/source/browse/trunk/apache2/ast source tree].
