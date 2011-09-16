@@ -1,0 +1,40 @@
+#!/bin/sh
+    
+# Load init functions
+. /lib/lsb/init-functions
+ 
+MONGREL_RAILS=/usr/bin/mongrel_rails
+AST_HOME=/home/example/ast/current
+AST_USER=nobody
+MONGREL_CONF=$AST_HOME/config/mongrel_cluster.yml
+    
+SUDO_USER='su - ${AST_USER} -c'
+case "$1" in
+  start|stop|restart)
+    echo -n "Starting AST: "
+
+    # solr index
+    $SUDO_USER "cd $AST_HOME; /usr/bin/rake solr:$1 RAILS_ENV=production 2>/dev/null"
+
+    # mongrel
+    $MONGREL_RAILS cluster::$1 -C $MONGREL_CONF
+    STATUS=$?
+
+    if [ "$STATUS" -eq 0 ]
+    then
+      log_success_msg "ast"
+    else
+      log_failure_msg "ast"
+    fi
+    exit $STATUS
+    ;;
+  status)
+    # Since we are always OK, always return OK as status
+    exit 0
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+esac
+
+exit 0
