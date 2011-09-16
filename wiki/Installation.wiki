@@ -101,8 +101,8 @@ Quickly recap.   One time setup for production:
  * Modify config/databases.yml
  * Modify config/mongrel_cluster.yml
  * `cap deploy:cold`
- * Modify apache2 site config
- * Modify init.d config
+ * Modify apache2 site config and place it wherever apache2 site config should be.
+ * Modify init.d config and place it in /etc/init.d.  
 
 After that, additional update is done with:
  * `cap deploy`
