@@ -1,0 +1,11 @@
+#labels Phase-Deploy
+#Describe DNS functionality
+
+= Introduction =
+
+AST is used to generate dns configuration.
+
+
+= Details =
+
+Here's how to do it.
