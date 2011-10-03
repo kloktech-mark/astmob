@@ -43,6 +43,6 @@ zone "da4.xyz.com"
     * Two zones, xyz.com and abc.xyz.com.
     * host1.abc.xyz.com will created under abc.xyz.com's zone file, *NOT* xyz.com.
     * Create a base zone like xyz.com can help catching some misspelled hostnames.
-  # Run ast_dns script which reads /etc/bind/named.conf.local and ask AST server for records of each zone.
+  # Run [https://code.google.com/p/astmob/source/browse/trunk/dns/ast_dns ast_dns] script which reads /etc/bind/named.conf.local and ask AST server for records of each zone.
     * Script is written in Perl and requires BIND::Conf_Parser, debian has it in package, libbind-confparser-perl.
     * Run script with enough privileges to write where zone files are specified in named.conf.local.
