@@ -1,7 +1,7 @@
 <div id='update-interfaces'>
 <%= error_messages_for :interface %>
   <p>
-    <b>IP</b> [x] = delete, [P] = Mark Primary<br />
+    <b>IP</b> ( [x] to delete IP [P] to mark IP primary )<br />
     <table>
       <tr>
         <th>vlan</th>
@@ -53,7 +53,7 @@
   
   <%= flash[:interface] %> 
   
-  <fieldset><legend>Assign IP</legend>
+  <fieldset><legend>Assigning IP</legend>
     <table>
       <tr>
         <td>Vlan:</td>
@@ -68,7 +68,7 @@
      
     </table>
          
-    <%= submit_to_remote 'provision','Provision',
+    <%= submit_to_remote 'provision','Auto Provision',
                         :url => {:controller => 'interfaces' , :action => :provision_vlan, :id => mini_edit},
                         :update => 'update-interfaces'
                         %>
@@ -76,7 +76,7 @@
     
     <% if mini_edit.drac_interface.nil? and mini_edit.resource_type == "Server"%>
       No Drac IP found.
-      <%= submit_to_remote 'add_drac','Add Drac?',
+      <%= submit_to_remote 'add_drac','Add Drac IP',
                           :url => {:controller => 'interfaces' , :action => :add_drac, :id => mini_edit},
                           :update => 'update-interfaces'
                           %>
@@ -120,7 +120,6 @@
                           :url => {:controller => 'interfaces' , :action => :multi_ip, :id => mini_edit},
                           :update => 'update-interfaces'
                           %>
-      <hr/>
     <% end %>                        
   </fieldset>
   
