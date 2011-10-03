@@ -1,11 +1,17 @@
 #summary Describe DNS functionality
 #labels Phase-Deploy
 
-= Introduction =
+AST can be used to generate dns configuration. 
 
-AST is used to generate dns configuration.
+= Step-By-Step Guide =
 
+  # Create zones.
+  # Asset will be places under closest match zone.  For example:
+    * There are two zone, xyz.com and abc.xyz.com.
+    * host1.abc.xyz.com will show up in abc.xyz.com's zone file and *not* in xyz.com.
+    * Create a base zone like xyz.com can help catching some misspelled hostnames.
+  # Run ast_dns script which reads /etc/bind/named.conf.local and ask AST server for records of each zone.
+  # Script is written in Perl and requires BIND::Conf_Parser, debian has it in package, libbind-confparser-perl.
+  # Run script with enough privileges to write where zone files are specified in named.conf.local.
 
-= Details =
-
-Here's how to do it.
+= Internal = 
