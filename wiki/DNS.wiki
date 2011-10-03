@@ -3,11 +3,11 @@
 
 AST can be used to generate dns configuration.  Works with [http://www.isc.org/software/bind Bind] style named configuration files.
 
-== Creating Zones ==
+== Creating Zones in AST ==
 
 Zones need to be created before configuration can be generated.  For bind, domain configuration is usually in /etc/bind/named.conf.local.
 
-Here's a snippet of named.conf.local where main domain is xyz.com and also subdomains(cp1,da4) for each colo:
+Given a main domain named xyz.com and subdomains(cp1,da4) for each colo, here's named.conf.local:
 {{{
 zone "xyz.com"
 {
@@ -33,6 +33,8 @@ zone "da4.xyz.com"
     allow-query { local; };
 };
 }}}
+
+
 
 == Downloading DNS Configuration ==
 
