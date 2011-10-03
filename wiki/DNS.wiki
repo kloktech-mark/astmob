@@ -5,7 +5,7 @@ AST can be used to generate dns configuration.  Works with [http://www.isc.org/s
 
 == Creating Zones in AST ==
 
-Zones need to be created before configuration can be generated.  For bind, domain configuration is usually in /etc/bind/named.conf.local.
+AST needs to know about your zones before configuration can be generated.  For bind, domain configuration is usually in /etc/bind/named.conf.local.
 
 Given a main domain named xyz.com and subdomains(cp1,da4) for each colo, here's named.conf.local:
 {{{
