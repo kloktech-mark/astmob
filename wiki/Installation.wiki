@@ -48,6 +48,9 @@ rake db:schema:load
 
 == Start ==
 
+AST uses [http://acts-as-solr.rubyforge.org/ solr] for searching.  It will need be started first before starting the application.  Start it with 
+`rake solr:start` 
+
 Given DB is created, you can start AST via 
 `script/server`
 and something like this should show up
