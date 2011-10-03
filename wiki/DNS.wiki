@@ -1,5 +1,5 @@
 #labels Phase-Deploy
-#Describe DNS functionality
+# Describe DNS functionality
 
 = Introduction =
 
