@@ -1,0 +1,91 @@
+#!/usr/bin/perl 
+#
+# Mark Lin
+# Parse given named config and find out domain and file. 
+# Pull DNS record from AST.
+#
+#  
+# Here's the run down of how this thing will work.
+#
+# - Parsed the given named config.
+# - From the zone name, figure out whether we getting forward zone or arpa records.
+# - Query ast for the zone info.
+# - If zone's found, validate by checking for occurance of "##ERROR##" in output.
+# --- If no error, save output to location specified in named config.
+# --- If errors out, print an error message, then move on to next zone.
+# - If zone not found in ast, do nothing to that zone.
+
+# named config
+$named_config = "/etc/bind/named.conf.local";
+
+# AST url [TODO]: Change it
+$ast_url = "https://ast.example.com/dns_zones/fetch_zone";
+
+# AST auth
+$ast_user = "username";
+$ast_pass = "password";
+
+# Construct ast curl, assume basic apache auth
+$ast = "curl -k -s -u $ast_user:$ast_pass $ast_url";
+
+
+# Define a subclass to use the bind config parser
+package Parser;
+
+use BIND::Conf_Parser;
+use vars qw(@ISA);
+@ISA = qw(BIND::Conf_Parser);
+
+# implement handle_* methods for config file statements that
+# we’re interested in
+sub handle_option {
+  my($self, $option, $argument) = @_;
+  return unless $option eq "directory";
+  $named_dir = $argument;
+}
+
+# Pick up the zone when it's master
+sub handle_zone {
+  my($self, $name, $class, $type, $options) = @_;
+  return unless $type eq "master" && $class eq "in";
+  $files{$name} = $options->{file};
+}
+
+# Our stuff comes here
+package main;
+Parser->parse_file($named_config);
+
+# Now we have parsed the file, let's go through them
+while ( my ($zone,$zone_file) = each %Parser::files )
+{
+  print "Fetching $zone...";
+
+  $zone_file = $zone_file;
+
+  # Determine whether it's a ptr or forward zone
+  # and construct the path accordingly.
+  if ( $zone =~ m/in-addr/ ) {
+    $cmd = "$ast/$zone/ptr/";
+  }
+  else {
+    $cmd = "$ast/$zone/a/";
+  }
+  my $zone_ast = `$cmd`;
+  print "successfully\n";
+
+  # See if result contain anything error
+  if (  $zone_ast !~ m/error(.*)\n/i && $zone_ast !~ m/Authentication Failed/ && $zone_ast !~ m/j_username/ ) {
+    #print "Writting to $zone_file \n";
+    if ( open FILE, ">$zone_file" ) {
+      print FILE $zone_ast;
+      close FILE;
+    }
+    else {
+      print "ERROR: Unable to write $zone_file.\n";
+    }
+
+  }
+  else {
+    print "ERROR: skipping $zone containing error: $1\n";
+  }
+}
