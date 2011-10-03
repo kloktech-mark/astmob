@@ -1,9 +1,40 @@
 #summary Describe DNS functionality
 #labels Phase-Deploy
 
-AST can be used to generate dns configuration.  Works with Bind style named configuration files.
+AST can be used to generate dns configuration.  Works with [http://www.isc.org/software/bind Bind] style named configuration files.
 
-== Step-By-Step Guide ==
+== Creating Zones ==
+
+Zones need to be created before configuration can be generated.  For bind, domain configuration is usually in /etc/bind/named.conf.local.
+
+Here's a snippet of named.conf.local where main domain is xyz.com and also subdomains(cp1,da4) for each colo:
+{{{
+zone "xyz.com"
+{
+    type master;
+    file "/etc/bind/zone/xyz.com";
+    allow-update { none; };
+    allow-query { local; };
+};
+
+zone "cp1.xyz.com"
+{
+    type master;
+    file "/etc/bind/zone/cp1.xyz.com";
+    allow-update { none; };
+    allow-query { local; };
+};
+
+zone "da4.xyz.com"
+{
+    type master;
+    file "/etc/bind/zone/da4.xyz.com";
+    allow-update { none; };
+    allow-query { local; };
+};
+}}}
+
+== Downloading DNS Configuration ==
 
   # Create zones matching your /etc/bind/named.conf.local
   # Asset will be places under closest matching zone.  For example:
