@@ -98,7 +98,7 @@ Run `cap -T` to see what capistrano can do in AST.
 
 Capistrano basically checkout a copy from defined svn repo, tar them up, ssh to host, untar and execute defined tasks such as `rake db:migrate` or restart server.  In case of `cap deploy:cold`, it does `rake db:create`, `rake db:migrate` and then tries to start server.
 
-In AST, we run it under [http://en.wikipedia.org/wiki/Mongrel_(web_server) Mongrel], a single-threaded web server.  Mongrel configuration is in config/mongrel_cluster.yml.  You will need to update the file with your AST deploy path and user you want mongrel to run as.
+I run AST under [http://en.wikipedia.org/wiki/Mongrel_(web_server) Mongrel], a single-threaded web server.  There are [http://www.modrails.com/ other server] for rails which is much recent and probably better..  Mongrel configuration is in config/mongrel_cluster.yml.  You will need to update the file with your AST deploy path and user you want mongrel to run as.
 
 You'll notice configuration has servers: 8.  Which means it will start 8 mongrel process start from port 4500 to 4507.  In order to use all these process, we need to place some sort of a load balancer in front of these mongrel process.  We use [http://httpd.apache.org/docs/2.0/mod/mod_proxy.html apache2 mod proxy].  
 
