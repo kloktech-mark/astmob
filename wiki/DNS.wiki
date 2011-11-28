@@ -1,4 +1,4 @@
-#summary Describe DNS functionality
+#summary How AST manages DNS
 #labels Phase-Deploy
 
 AST can be used to generate dns configuration.  Works with [http://www.isc.org/software/bind Bind] style named configuration files.
