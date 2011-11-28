@@ -1,0 +1,5 @@
+#summary Hardware information collector
+
+AST polls hardware info such as server model, memory, hard disk from [http://www.ocsinventory-ng.org/en/ OCSInventory] database.
+
+Configuration for ocs database credential is in https://code.google.com/p/astmob/source/browse/trunk/ast/config/database.yml under ocs_*.
