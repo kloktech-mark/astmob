@@ -1,4 +1,4 @@
-#summary Installation instructions.
+﻿#summary Installation instructions.
 #labels Phase-Deploy
 
 AST is written in Ruby on Rails(RoR) and it has a notion of dev and production environment where one can have different settings for each.  Very useful as it gives a way to play with new thing without breaking production while still having code check in.
