@@ -1,0 +1,32 @@
+#summary How AST manages Nagios configuration
+
+AST can generate Nagios configuration.  It does NOT contain full set of Nagios configuration, instead, it tries to maintain dynamic information such as hostgroup, host, services and relationship between checks and notification.
+
+= Details =
+
+This doc assumes its reader is versed in Nagios configuration.  
+
+AST manages following Nagios configurations:
+
+*Hostgroup*
+  * Hostgroup Template
+  * Host(s)
+    * Hostname, IP
+  * Services(Active or Passive)
+  * Escalation
+
+*Service (Active Check)*
+  * Service Template
+  * Check command 
+
+*Service Container(Passive Check)*
+  * Service Template
+  * Service Checks(Multiple)
+    * Service Checker
+
+
+Templates in Hostgroup and Service is just a name refer to additional configurations not in AST.  Each template name should have a reference entry so they can be used by hostgroup or services.  The actual configuration should be in one of the files listed in nagios.cfg's cfg_file directives.
+
+= Running Nagios with Generated Config =
+
+From 
