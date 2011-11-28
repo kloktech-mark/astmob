@@ -29,4 +29,6 @@ Templates in Hostgroup and Service is just a name refer to additional configurat
 
 = Running Nagios with Generated Config =
 
-From 
+From source tree, there is an init.d script that pulls Nagios configuration and put it into a file.  Ensure that  file is included by nagios.cfg.
+
+https://code.google.com/p/astmob/source/browse/trunk/init.d/nagios
