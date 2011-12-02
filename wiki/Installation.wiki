@@ -19,7 +19,6 @@ Gems requirements:
  * rails --version=2.1.2
  * rake
  * netaddr
- * will_paginate
  * mysql
  * mongrel (Server for RoR)
 
