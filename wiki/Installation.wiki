@@ -16,7 +16,8 @@ System requirements:
  * [http://rubygems.org/ gem] (Gem is like pear for PHP or cpan for Perl.  It lets you install Ruby modules.  Most distro has it packaged.)
 
 Gems requirements:
- * rails --version=2.3.9
+ * rails --version=2.3.14 (Not needed, bundle with AST).
+
  * rake
  * netaddr
  * will_paginate --version=2.3.11
