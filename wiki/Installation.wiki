@@ -16,11 +16,12 @@ System requirements:
  * [http://rubygems.org/ gem] (Gem is like pear for PHP or cpan for Perl.  It lets you install Ruby modules.  Most distro has it packaged.)
 
 Gems requirements:
- * rails --version=2.1.2
+ * rails --version=2.3.9
  * rake
  * netaddr
+ * will_paginate --version=2.3.11
  * mysql
- * mongrel (Server for RoR)
+ * mongrel (Optional, can be swap with Phusion Passenger under Apache)
 
 Gems can be installed with: `gem install _gemname_`.
 
