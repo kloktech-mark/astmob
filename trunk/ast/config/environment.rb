@@ -5,7 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.9' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -37,7 +37,8 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_ast_session',
+    #:session_key => '_ast_session',
+    :key => '_ast_session',
     :secret      => '0fd2602c6527cb61d7d852dbf01e2c7239cc50bfa438c84c9a870e6fba6120a71d97b79c86d06e87348b7424248a9ab855b073c0e07cb304d01cb0bfc189656b'
   }
 
@@ -56,9 +57,5 @@ Rails::Initializer.run do |config|
 
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
-
-  config.gem 'will_paginate', :version => '~> 2.3.8', :lib => 'will_paginate', 
-    :source => 'http://gems.github.com'
-  
 end
 
