@@ -20,6 +20,7 @@ Gems requirements:
 
  * rake
  * netaddr
+ * snmp
  * will_paginate --version=2.3.11
  * mysql
  * mongrel (Optional, can be swap with Phusion Passenger under Apache)
