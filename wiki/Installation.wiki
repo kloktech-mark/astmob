@@ -54,6 +54,15 @@ rake db:schema:load
 AST uses [http://acts-as-solr.rubyforge.org/ solr] for searching.  It will need be started first before starting the application.  Start it with 
 `rake solr:start` 
 
+If you have trouble with starting solr with error like this
+{{{
+/usr/lib/ruby/1.8/net/http.rb:1060:in `request': undefined method `closed?' for nil:NilClass (NoMethodError)
+}}}
+it might be issue with ruby 1.8.7.  Here's a patch to the http.rb you can apply.
+
+http://redmine.ruby-lang.org/attachments/835/net_http_socket_close.patch
+
+
 Given DB is created, you can start AST via 
 `script/server`
 and something like this should show up
