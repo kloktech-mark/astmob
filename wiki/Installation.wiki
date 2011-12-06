@@ -62,6 +62,8 @@ it might be issue with ruby 1.8.7.  Here's a patch to the http.rb you can apply.
 
 http://redmine.ruby-lang.org/attachments/835/net_http_socket_close.patch
 
+The background story is here:
+http://redmine.ruby-lang.org/issues/show/2708
 
 Given DB is created, you can start AST via 
 `script/server`
