@@ -12,6 +12,7 @@ Some of the initial setup such as DB setup are the same between dev and producti
 System requirements:
  * ruby 1.8+
  * ruby-dev
+ * rubygems
  * mysql
  * [http://rubygems.org/ gem] (Gem is like pear for PHP or cpan for Perl.  It lets you install Ruby modules.  Most distro has it packaged.)
  * java (To run solr, indexing/searching engine)
