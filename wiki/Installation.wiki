@@ -50,9 +50,10 @@ These two mysql lines should be enough to start dev.  Notice database name diffe
  * `grant all privileges on ast_development.* TO 'root'@'localhost';`
 
 Then load the [https://code.google.com/p/astmob/source/browse/trunk/ast/db/schema.rb schema]
-
+{{{
+rake db:create
 rake db:schema:load
-
+}}}
 == Start ==
 
 AST uses [http://acts-as-solr.rubyforge.org/ solr] for searching.  It will need be started first before starting the application.  Start it with 
