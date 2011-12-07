@@ -14,6 +14,7 @@ System requirements:
  * ruby-dev
  * rubygems
  * mysql
+ * libmysqlclient-dev (to build mysql gem)
  * [http://rubygems.org/ gem] (Gem is like pear for PHP or cpan for Perl.  It lets you install Ruby modules.  Most distro has it packaged.)
  * java (To run solr, indexing/searching engine)
 
