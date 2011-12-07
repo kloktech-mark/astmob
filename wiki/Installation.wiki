@@ -22,6 +22,7 @@ Gems requirements:
  * rails --version=2.3.14 (Not needed, bundle with AST).
 
  * rake
+ * rdoc
  * netaddr
  * snmp
  * will_paginate --version=2.3.11
