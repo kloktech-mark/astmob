@@ -36,16 +36,16 @@ Verify gems installation with: `gem list --local`
 = Dev  =
 
 Checkout code from source.
-
+{{{
 svn checkout http://astmob.googlecode.com/svn/trunk/ast ast
-
+}}}
 Assuming current directory is ast/.  
 
 == Mysql Setup ==
 
 DB setup in RoR application is done via rake.  [http://rake.rubyforge.org/ Rake] is basically ruby make.  RoR has sets of defined tasks that can be performed with rake.  Run `rake --tasks` to see all the tasks it can do.
 
-These two mysql lines should be enough to start dev.  Notice database name differs between dev and prod.
+These two mysql lines should be enough to start dev.  Notice database name differs between dev and prod.  
  * `create database ast_development;`
  * `grant all privileges on ast_development.* TO 'root'@'localhost';`
 
