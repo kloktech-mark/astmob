@@ -1,0 +1,137 @@
+#!/usr/bin/python
+# 
+# Copyright 2014 Google Inc. All Rights Reserved.
+
+"""DHCP config generation using data from AST.
+"""
+
+__author__ = "malin@google.com (Mark Lin)"
+
+import getopt
+import json
+import logging
+import os
+import string
+import sys
+import urllib2
+
+def main(argv):
+
+  logger = logging.getLogger("ast_dhcp")
+  logger.setLevel(logging.DEBUG)
+  
+  # create console handler and set level to debug
+  ch = logging.StreamHandler()
+  ch.setLevel(logging.DEBUG)
+  
+  # create formatter
+  formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+  
+  # add formatter to ch
+  ch.setFormatter(formatter)
+  
+  # add ch to logger
+  logger.addHandler(ch)
+  
+
+  try: 
+    colo = sys.argv[1]
+  except IndexError:
+    print "ast_dhcp <colo_name>"
+    sys.exit(2)
+
+  dhcp_dir = '/etc/dhcp/colo'
+
+  # Ensure directory is there
+  if not os.access(dhcp_dir, os.F_OK):
+    logger.info(drac_dir + ' doesn\'t exist, creating now')
+    sys.exit(1)
+
+  colo_file = dhcp_dir + '/' + colo + '.network'
+
+  try:
+    f = open(colo_file, "wb")
+  except IOError:
+    logger.error('Failed to open %s for write.  Check permission.' % colo_file)
+    sys.exit(1)
+
+  # Build full path to get pxe data with supplied domain(ex: sc1, sc9, atl14)
+  #ast_url = "http://localhost:3000/dhcpd/" + colo
+  ast_url = "$AST_SERVER/dhcpd/" + colo
+
+  # AST auth
+  ast_user = ""
+  ast_pass = ""
+  
+  # Build server
+  next_server = '192.119.22.140'
+  
+  # create a password manager
+  password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+  
+  # Add the username and password.
+  # If we knew the realm, we could use it instead of None.
+  password_mgr.add_password(None, ast_url, ast_user, ast_pass)
+
+  handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+
+  # create "opener" (OpenerDirector instance)
+  opener = urllib2.build_opener(handler)
+  
+  # Try to fetch config
+  try:
+    #response = urllib2.urlopen(ast_url)
+    response = opener.open(ast_url)
+    pxe_data = json.loads(response.read())
+    #print json.dumps(pxe_data, indent=4, separators=(',',': '))
+  except ValueError, e:
+    logger.critical("Problem fetch data: " + str(e))
+    logger.critical(dir(response))
+    logger.critical(response.url)
+    exit(1)
+  
+  subnet_template = string.Template("""# ${name}
+subnet ${network} netmask ${netmask} {
+  option subnet-mask ${netmask};
+  option routers ${routers};
+  filename "pxelinux.0";
+  next-server %s;
+  ${boxes_output}
+}
+
+""" % (next_server))
+  
+  server_template = string.Template("""
+  host ${hostname} {
+    hardware ethernet ${mac};
+    fixed-address ${ip};
+  }""")
+  
+  # Check top level error
+  if "error" in pxe_data:
+    logger.critical("Failed: " + pxe_data["error"] + "(" + ast_url + ")")
+    exit(1)
+  
+  # Now let"s get the data out
+  for vlan_name in pxe_data:
+    vlan_detail = pxe_data[vlan_name]
+    logger.info('Processing Vlan \'%s\'...' % vlan_name)
+  
+    boxes = ''
+    for box in vlan_detail['boxes']:
+      try: 
+        if not box['mac']:
+          logger.warning(box["hostname"] + ": no mac define")
+        else:
+          boxes += server_template.safe_substitute(box)
+      except Exception as e:
+        logger.warning(box)
+    if not boxes:
+      logger.warning('Vlan \'%s\' has no hosts, skipping it' % vlan_name)
+    else:
+      vlan_detail['boxes_output'] = boxes
+      f.write(subnet_template.safe_substitute(vlan_detail))
+
+  f.close()
+if __name__ == "__main__":
+  main(sys.argv[1:])
