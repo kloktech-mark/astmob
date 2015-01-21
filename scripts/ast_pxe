@@ -1,0 +1,163 @@
+#!/usr/bin/python
+# 
+# Copyright 2014 Google Inc. All Rights Reserved.
+
+"""PXE config generation using data from AST.
+
+Read pxe configuration from AST, generate individual boot file for each server.
+Assuming script is ran from build server
+"""
+
+__author__ = "malin@google.com (Mark Lin)"
+
+import logging
+import json
+import os
+import socket
+import string
+import sys
+import urllib2
+
+
+def main(argv):
+  tftp_dir = "/var/lib/tftpboot/pxelinux.cfg"
+  
+  # PXE prepend ARPTYPE(01) when matching mac address
+  tftp_prefix = "01-"
+  
+  drac_dir = "/var/www/pxe/drac"
+  
+  logger = logging.getLogger("ast_pxe")
+  logger.setLevel(logging.DEBUG)
+  
+  # create console handler and set level to debug
+  ch = logging.StreamHandler()
+  ch.setLevel(logging.DEBUG)
+  
+  # create formatter
+  formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+  
+  # add formatter to ch
+  ch.setFormatter(formatter)
+  
+  # add ch to logger
+  logger.addHandler(ch)
+  
+  
+  try:
+    colo = sys.argv[1]
+  except IndexError:
+    print "ast_pxe <colo_name>"
+    sys.exit(2)
+  
+  # Build full path to get pxe data with supplied domain(ex: sc1, sc9, atl14)
+  ast_url = "https://$AST_SERVER/pxe/" + colo
+  
+  # AST auth
+  ast_user = ""
+  ast_pass = ""
+  
+  # create a password manager
+  password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+  
+  # Add the username and password.
+  # If we knew the realm, we could use it instead of None.
+  password_mgr.add_password(None, ast_url, ast_user, ast_pass)
+  
+  handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+  
+  # create "opener" (OpenerDirector instance)
+  opener = urllib2.build_opener(handler)
+  
+  # Try to fetch config
+  try:
+    #response = urllib2.urlopen(ast_url)
+    response = opener.open(ast_url)
+    pxe_data = json.loads(response.read())
+    #print json.dumps(pxe_data, indent=4, separators=(',',': '))
+  except ValueError, e:
+    logger.critical("Problem fetch data: " + str(e))
+    logger.critical(dir(response))
+    logger.critical(response.url)
+    exit(1)
+
+  # Name server to use during installation
+  name_server = ""
+  
+  # pxe_server is the build server itself
+  pxe_server = ""
+  
+  # Build a template for pxe
+  pxe_template = string.Template("""DISPLAY autoboot.txt
+
+DEFAULT wheezy-vga-only
+
+LABEL wheezy-console-vga
+      kernel debian/wheezy/amd64/linux
+      append vga=normal initrd=debian/wheezy/amd64/initrd.gz ramdisk_size=10800 root=/dev/rd/0 rw auto url=http://%s/pxe/${cfg}.cfg keymap=us locale=en_US interface=eth0 domain=${domain} hostname=${hostname_short} netcfg/get_ipaddress=${ip} netcfg/get_netmask=${netmask} netcfg/get_gateway=${gateway} netcfg/get_nameservers=%s netcfg/confirm_static=true netcfg/disable_dhcp=true finish-install/keep-consoles=true noirqdebug console=tty0 console=ttyS1,115200 --
+
+LABEL wheezy-vga-only
+      kernel debian/wheezy/amd64/linux
+      append vga=normal initrd=debian/wheezy/amd64/initrd.gz ramdisk_size=10800 root=/dev/rd/0 rw auto url=http://%s/pxe/${cfg}.cfg keymap=us locale=en_US interface=eth0 domain=${domain} hostname=${hostname_short} netcfg/get_ipaddress=${ip} netcfg/get_netmask=${netmask} netcfg/get_gateway=${gateway} netcfg/get_nameservers=%s netcfg/confirm_static=true netcfg/disable_dhcp=true finish-install/keep-consoles=true noirqdebug --
+
+timeout 30
+prompt 1
+""" % (pxe_server, name_server, pxe_server, name_server))
+  
+  # DRAC data template
+  drac_template = string.Template("""ip=${ip}
+netmask=${netmask}
+gateway=${gateway}
+hostname=${hostname}
+""")
+  
+  # Ensure directory is there
+  if not os.access(drac_dir, os.F_OK):
+    logger.info(drac_dir + " doesn't exist, creating now")
+    os.mkdir(drac_dir)
+  
+  # Check top level error
+  if "error" in pxe_data:
+    logger.critical("Failed: " + pxe_data["error"] + "(" + ast_url + ")")
+    exit(1)
+  
+  # Now let"s get the data out
+  for box in pxe_data:
+    if "error" in box:
+      logger.warning(box["hostname"] + ": " + box["error"])
+      continue
+    elif not box["mac"]:
+      logger.warning(box["hostname"] + ": Mac not found")
+      continue
+    else:  # No error at box level, let"s build the pxe file
+      box["domain"] = ".".join(box["hostname"].split(".")[-3:])  # domain
+      box["hostname_short"] = box["hostname"].split(".")[0]  # shortname
+      # Distinguish install config on hostname.
+      if box["hostname"].startswith("db"):
+        box["cfg"] = "wheezy_db"
+      else:
+        box["cfg"] = "wheezy"
+  
+      # Build the filename based on box"s mac
+      pxe_file = tftp_dir+"/"+tftp_prefix+box["mac"].replace(":", "-")
+      f = open(pxe_file, "wb")
+      f.write(pxe_template.safe_substitute(box))
+      f.close()
+  
+      # Check if we have drac
+      if "drac" not in box:
+        logger.warning(box["hostname"] + ": No drac info")
+        continue
+      if "error" in box["drac"]:
+        logger.warning(box["hostname"] + ": " + box["drac"]["error"])
+        continue
+      else:
+        # Write the drac.data file
+        drac_file = drac_dir+"/"+box["hostname"]
+        f = open(drac_file, "wb")
+        f.write(drac_template.safe_substitute(box["drac"]))
+        f.close()
+      logger.info(box["hostname"] + " successfully generated.")
+
+if __name__ == "__main__":
+  main(sys.argv[1:])

@@ -22,8 +22,8 @@ $named_config = "/etc/bind/named.conf.local";
 $ast_url = "https://ast.example.com/dns_zones/fetch_zone";
 
 # AST auth
-$ast_user = "username";
-$ast_pass = "password";
+$ast_user = "";
+$ast_pass = "";
 
 # Construct ast curl, assume basic apache auth
 $ast = "curl -k -s -u $ast_user:$ast_pass $ast_url";
