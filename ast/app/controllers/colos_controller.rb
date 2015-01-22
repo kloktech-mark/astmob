@@ -75,6 +75,7 @@ class ColosController < ApplicationController
 
     respond_to do |format|
       if @colo.update_attributes(params[:colo])
+        format.html { render :action => "edit" }
         flash[:notice] = 'Colo was successfully updated.'
         format.html { redirect_to(@colo) }
         format.xml  { head :ok }
@@ -89,7 +90,12 @@ class ColosController < ApplicationController
   # DELETE /colos/1.xml
   def destroy
     @colo = Colo.find(params[:id])
-    @colo.destroy
+
+    if @colo.assets.length > 0 or @colo.vlan_details.length > 0
+      flash[:error] = "#{@colo.name} has assets or vlans assigned, please remove association first." 
+    else  
+      @colo.destroy
+    end
 
     respond_to do |format|
       format.html { redirect_to(colos_url) }

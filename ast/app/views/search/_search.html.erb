@@ -11,7 +11,7 @@
       <% if a.respond_to?('asset') %>
         <% a = a.asset%>
       <% end %>
-      <li class="autocomplete_item"><%=h a.name %></li>
+      <li class="autocomplete_item"><%=h a.name rescue nil %></li>
     <% end %>
   <% end %>
 

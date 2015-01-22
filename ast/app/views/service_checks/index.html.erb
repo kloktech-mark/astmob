@@ -13,19 +13,19 @@
   </tr>
 
 <% @service_checks = sort_by_relationship(@service_checks)%>
-<% @service_checks.each do |@service_check| %>
+<% @service_checks.each do |service_check| %>
   <tr class=<%= cycle('row_odd','row_even')%> >
     <td>
-     <%= link_to(image_tag("trashcan.png", :size => "16x16"), { :action => "delete_check", :id => @service_check }, { :confirm => 'Are you sure you want to delete ' + @service_check.name + '?' }) %>
+      <%= link_to(image_tag("trashcan.png", :size => "16x16"), { :action => "delete_check", :id => service_check }, { :confirm => 'Are you sure you want to delete ' + service_check.name + '?' }) %>
 
-      <%= link_to @service_check.name, edit_service_check_path(@service_check) %>
+      <%= link_to service_check.name, edit_service_check_path(service_check) %>
     </td>
 	<td>
-		<% a = ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).label rescue nil %>
-		<% b = @service_check.root rescue nil %>
-		<% c = ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).definition rescue nil %>
+		<% a = ServiceChecker.find(:first, :conditions => ["id = '#{service_check.service_checker_id}'"]).label rescue nil %>
+		<% b = service_check.root rescue nil %>
+		<% c = ServiceChecker.find(:first, :conditions => ["id = '#{service_check.service_checker_id}'"]).definition rescue nil %>
 		<% def_arr = c.split('!') rescue nil%>
-		<% check_arr = @service_check.definition.split('!') %>
+		<% check_arr = service_check.definition.split('!') %>
 		<% if not b.nil? %>
 		  <%= b %>
 		<% end %>
@@ -43,10 +43,10 @@
 		<% end%>
 	</td>	
     <td>
-		<%= ServiceChecker.find(:first, :conditions => ["id = '#{@service_check.service_checker_id}'"]).name rescue nil %>
+		<%= ServiceChecker.find(:first, :conditions => ["id = '#{service_check.service_checker_id}'"]).name rescue nil %>
 	</td>
 	<td>
-		<%= ServiceCheck.find(:first, :conditions => ["id = '#{@service_check.parent_id}'"]).name rescue nil %>
+		<%= ServiceCheck.find(:first, :conditions => ["id = '#{service_check.parent_id}'"]).name rescue nil %>
 	</td>	
 	<td>  
 	    	

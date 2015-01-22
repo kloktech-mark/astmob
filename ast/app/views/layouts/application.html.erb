@@ -15,11 +15,20 @@
     
     <%= stylesheet_link_tag('print', :media => :print) %>
 
-         
+    <%= javascript_include_tag "lytebox", :cache => "lytebox" %>
+
+    <%= javascript_include_tag "/jstree/_lib/jquery.js", :cache => "jquery" %>
+    <%= javascript_include_tag "/jstree/jquery.hotkeys.js", :cache => "jquery" %>
+    <%= javascript_include_tag "/jstree/jquery.cookie.js", :cache => "jquery" %>
+    <%= javascript_include_tag "/jstree/jquery.jstree.js", :cache => "jquery" %>
+
     <%= javascript_include_tag :defaults, :cache => true %>
 
-    <%= javascript_include_tag "lytebox", :cache => "lytebox" %>
-    
+    <!-- Turn on noConflict so prototype js continues to work -->
+    <script>
+      jQuery.noConflict();
+    </script>
+
   </head>
 
   <body onload="document.getElementById('search_search').focus();">
@@ -30,6 +39,7 @@
     
     <div id="top1" align="left">
       <%= image_tag 'ajax-loader.gif', :id=>'spinner', :style=>"display:none; float:right" %> 
+      <%= image_tag 'fiber_house.gif', :style=>"padding: 0px" %>
       <%= image_tag 'ast.png', :style=>"padding: 5px" %>
     
       <% form_for(:search, :url => {  :controller => :search, :action => :search} ) do |f| -%>
@@ -40,7 +50,6 @@
         rev="width: 600px; height: 300px; scrolling: auto;">*help</a>
       <% end %>    
  
-    
       <%= auto_complete_field :search_search,
           :url => {:controller => :search, :action => :search},
           :frequency => 0.7,

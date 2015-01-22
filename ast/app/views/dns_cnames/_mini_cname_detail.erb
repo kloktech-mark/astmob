@@ -1,5 +1,31 @@
 <div id='update-dns-cname-details'>
   <p>
+  <% fields_for mini_cname_detail do |f| %>
+    <b>Point to External Name</b><br />
+    <%= f.text_field :external %>
+  </p>
+  <% end %>
+  <br/>  
+  <b>OR</b><br/>
+  <br/>
+  <fieldset><legend><b>Point to Assets</b></legend>
+    <% if mini_cname_detail.cname_assets.empty? %>
+      <%= collection_select("cname_assets","asset_id", Asset.find(:all, :order => :name,
+          :conditions => "resource_type != 'DnsCname'"), "id", "name", 
+          {},{:multiple => true, :size => 7}) %>
+   
+    <% else %>
+      <%= collection_select("cname_assets","asset_id", Asset.find(:all, :order => :name,
+          :conditions => "resource_type != 'DnsCname' AND id NOT IN ( #{mini_cname_detail.cname_assets.collect{|a| a.id}.join(',')} )"), 
+          "id", "name", {},{:multiple => true, :size => 7}) %>
+
+    <% end %>         
+    <%= submit_to_remote 'add','Add',
+                       :url => {:controller => 'dns_cnames' , :action => :create_cname_detail, :id => mini_cname_detail},
+                       :update => 'update-dns-cname-details'
+                       %>
+  </fieldset>
+
     <b>Pointing To</b><br />
     <table>
       <tr>
@@ -25,21 +51,4 @@
       <% end %>
     </table>
   </p>     
-  <fieldset><legend>Point to Assets</legend>
-    <% if mini_cname_detail.cname_assets.empty? %>
-      <%= collection_select("cname_assets","asset_id", Asset.find(:all, :order => :name,
-          :conditions => "resource_type != 'DnsCname'"), "id", "name", 
-          {},{:multiple => true, :size => 7}) %>
-   
-    <% else %>
-      <%= collection_select("cname_assets","asset_id", Asset.find(:all, :order => :name,
-          :conditions => "resource_type != 'DnsCname' AND id NOT IN ( #{mini_cname_detail.cname_assets.collect{|a| a.id}.join(',')} )"), 
-          "id", "name", {},{:multiple => true, :size => 7}) %>
-
-    <% end %>         
-    <%= submit_to_remote 'add','Add',
-                       :url => {:controller => 'dns_cnames' , :action => :create_cname_detail, :id => mini_cname_detail},
-                       :update => 'update-dns-cname-details'
-                       %>
-  </fieldset>
 </div>

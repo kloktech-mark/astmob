@@ -1,0 +1,31 @@
+Listing hosts under colo '<%=@vlan_detail.colo.name%>' vlan '<%=@vlan_detail.vlan.name%>'<br/>
+BOLD typed IP belogs to the vlan
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>IP</th>
+
+  </tr>
+
+<% for asset in @assets %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td><%= link_to asset.name, edit_polymorphic_path(asset.resource) %></td>
+    <td><%=h asset.resource_type rescue nil %></td>    
+    <td>
+      <table>
+        <% for o in asset.interfaces %>
+         <tr>
+          <% if o.vlan_detail == @vlan_detail %>
+            <td><b><%= o.ip_to_string %></b></td>
+          <% else %>
+            <td><%= o.ip_to_string %></td>
+          <% end %>
+         </tr>
+        <% end %>
+      </table>
+    </td>
+  </tr>
+<% end %>
+
+</table>

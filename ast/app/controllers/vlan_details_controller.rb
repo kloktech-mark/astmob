@@ -18,6 +18,21 @@ class VlanDetailsController < ApplicationController
   def index
     @vlan_details = VlanDetail.find(:all)
 
+    @utils = Hash.new()
+
+    @vlan_details.each{|v| 
+      total = 0
+      # subnet takes comma separated values
+      v.subnet.split(',').each{|s|
+        cidr = NetAddr::CIDR.create(s)
+        total = total + cidr.size()
+      }
+      @utils[v.id] = Hash.new()
+      @utils[v.id]['total'] = total
+      @utils[v.id]['used'] = v.interfaces.length
+      @utils[v.id]['prct_used'] = (v.interfaces.length.to_f / total.to_f * 100).round(2) rescue nil
+    }
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @vlan_details }
@@ -94,6 +109,17 @@ class VlanDetailsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(vlan_details_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  # Show asset with IP under that vlan
+  def vlan_hosts
+    @vlan_detail = VlanDetail.find(params[:id])
+    @assets = @vlan_detail.assets.sort{|a,b| a.name <=> b.name}
+    @assets = @assets.uniq{|x| x.name}
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @assets }
     end
   end
 end

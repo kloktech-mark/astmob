@@ -1,3 +1,7 @@
+<% if flash[:error] %>
+  <p style="color: red">Error: <%= flash[:error] %></p>
+<% end %>
+
 <h1>Listing colos</h1>
 
 <table>

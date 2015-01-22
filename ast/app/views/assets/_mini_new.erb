@@ -5,7 +5,7 @@
   <p>
     <b>Name</b><br />
     <%= f.text_field :name %>
-    <%= f.error_message_on (:name) %>
+    <%= f.error_message_on(:name) %>
 
   </p>
   <% if use_ocs and controller_is('servers') %>
@@ -32,9 +32,9 @@
     </tr>
     <tr>
       <td><%= f.collection_select("colo_id", Colo.find(:all), "id", "name") %></td>
-      <td><%= f.text_field (:row, {:size => "1"}) %></td>
-      <td><%= f.text_field (:rack, {:size => "1"}) %></td>
-      <td><%= f.text_field (:pos, {:size => "1"}) %></td>
+      <td><%= f.text_field(:row, {:size => "1"}) %></td>
+      <td><%= f.text_field(:rack, {:size => "1"}) %></td>
+      <td><%= f.text_field(:pos, {:size => "1"}) %></td>
     </tr>
   </table>
   

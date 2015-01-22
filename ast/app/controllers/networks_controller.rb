@@ -16,7 +16,9 @@ class NetworksController < ApplicationController
   # GET /networks
   # GET /networks.xml
   def index
-    @networks = Network.find(:all)
+    @networks = Network.paginate :page => params[:page], :per_page => 30, :order => 'id desc'
+
+    #@networks = Network.find(:all)
     
     #raise @networks.inspect
     respond_to do |format|
@@ -108,5 +110,26 @@ class NetworksController < ApplicationController
       format.html { redirect_to(networks_url) }
       format.xml  { head :ok }
     end
+  end
+
+  def getnetwork
+    network_model = NetworkModel.find_by_manufacture(params[:name])
+    networks = network_model.networks
+    output = Array.new
+    networks.each { |n| 
+      t = Hash.new
+      t['asset_id'] = n.asset.id
+      t['name'] = n.asset.name
+      t['ip_address'] = n.asset.primary_interface.ip_to_string
+      t['colo_name'] = n.asset.colo.name
+      t['resource_type'] = n.asset.resource_type
+      t['management_zone'] = n.asset.colo.name[0..2]
+      t['manufacturer'] = network_model.manufacture
+      t['model'] = network_model.model
+      t['created_timestamp'] = n.asset.created_at
+
+      output << t
+    }
+    render :json => output
   end
 end

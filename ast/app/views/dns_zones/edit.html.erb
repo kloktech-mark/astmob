@@ -46,6 +46,11 @@
           <%= f.text_field :minimum %>
         </p>
 
+        <p>
+          <b>Master Record</b><br />
+          <%= f.text_field :mastera %>
+        </p>
+
       </td>
       <td valign="top">
         <%= render(:partial => "mini_ns_record",:object => @dns_zone) %>

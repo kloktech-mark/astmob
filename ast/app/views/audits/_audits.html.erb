@@ -44,7 +44,7 @@
         <% else %>
           <% if audit.auditable_type == 'Interface' %>
             <% if change[0] == 'vlan_detail_id' %>
-              <%=h change[0] %> = <%=h VlanDetail.find(change[1]).vlan.name%>
+              <%=h change[0] %> = <%=h VlanDetail.find(change[1]).vlan.name rescue nil %>
               <br/>
             <% elsif change[0] == 'ip' %>
               <%=h change[0] %> = <%=h Interface.i_to_ip(change[1]) %>

@@ -174,7 +174,7 @@ class NagiosHostGroupsController < ApplicationController
           # If asset type is Vip, then we will be monitoring it from every colo
           # Doing something special.  Since Vip itself doesn't have colo, its colo then inherits from whatever colo its HA belongs to.
           if asset.resource_type == "Vip"
-            if  asset.resource.colo == colo or asset.name =~ /\.com$/
+            if asset.resource.colo == colo or asset.name =~ /\.x\./ or asset.name =~ /\.i\./
               asset_list << asset
             end
 

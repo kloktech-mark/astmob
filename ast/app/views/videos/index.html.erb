@@ -1,0 +1,44 @@
+<h1>Listing video gears</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Colo</th>
+    <th>Video model</th>
+    <th>IP</th>
+  </tr>
+
+<% for video in @videos %>
+  <tr class=<%= cycle('row_odd','row_even')%> >
+    <td>
+      <%= link_to '[X]', video, :confirm => 'Are you sure?', :method => :delete %>
+      
+      <%= link_to video.name, edit_video_path(video) rescue nil %>
+    </td>    
+    <td><%= video.colo.name rescue nil %></td>
+     
+    <td><%=h video.video_model.manufacture rescue nil %> - <%=h video.video_model.model rescue nil %></td>
+    <td>
+      <table>
+	<% if ! video.asset.nil? %>
+        <% for o in video.asset.interfaces %>
+          <tr>
+            <td>
+              <%= o.ip_to_string %>
+              <% if o.name and !o.name.empty? %>
+                (<%= o.name rescue nil %>)
+              <% end %>
+            </td>
+           </tr>
+        <% end %>
+	<% end %>
+      </table>
+    </td>
+
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New video', new_video_path %>

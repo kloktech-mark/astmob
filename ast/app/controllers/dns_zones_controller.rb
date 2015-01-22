@@ -77,7 +77,7 @@ class DnsZonesController < ApplicationController
     respond_to do |format|
       if @dns_zone.update_attributes(params[:dns_zone])
         flash[:notice] = 'DnsZone was successfully updated.'
-        format.html { redirect_to(@dns_zone) }
+        format.html { render :action => "edit" }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -145,11 +145,17 @@ class DnsZonesController < ApplicationController
     zone_name = params[:src]
     # Record type, A or PTR
     record_type = params[:type]
+    # zone name pass from url
+    network_type = params[:net]
     
     # Output Buffer
     @o = ''
     
-    dns_zone = DnsZone.find_by_name(zone_name)
+    if network_type == 'int'
+      dns_zone = DnsZone.find_by_name(zone_name + "-int")
+    else
+      dns_zone = DnsZone.find_by_name(zone_name)
+    end
     
     # If can't find the specified zone, we'll return with some useful text
     if dns_zone.nil?
@@ -165,8 +171,9 @@ class DnsZonesController < ApplicationController
       # 4. Record will be specified in absolute name, include the "." at the end
       # For ex: ads1.vip.sc9.yahoo.com should match zone, "vip.sc9.yahoo.com" first, if not found,
       # try sc9.yahoo.com, then yahoo.com, then .com.  If no zone match, then this record is ignored.
-      @o += "; Generated zone for #{dns_zone.name} on #{Time.new.to_s}\n"
-      @o += "$ORIGIN #{dns_zone.name}.\n"
+      # @o += "; Generated zone for #{zone_name} on #{Time.new.to_s}\n"
+      # Dont think we need ORIGIN, will find out when deploy internal DNS
+      #@o += "$ORIGIN #{dns_zone.name}.\n"
       @o += "$TTL #{dns_zone.my_ttl}\n"
       
       # In order to make sure we only generate one record, we actually have get all asset and zone
@@ -184,24 +191,26 @@ class DnsZonesController < ApplicationController
       @o += ");\n"
       # NS
       for ns in dns_zone.my_dns_ns_records
-        @o += "@ \t\tNS\t\t#{ns.name}.\n"        
+        @o += "\t\tNS\t\t#{ns.name}.\n"        
       end
       # MX
       for mx in dns_zone.my_dns_mx_records
-        @o += "@ \t\tMX\t\t#{mx.priority} #{mx.name}.\n"
+        @o += "\t\tMX\t\t#{mx.priority} #{mx.name}.\n"
       end
       
       @o += "\n"
       
       # use appropriate function for each type of record
       if record_type == 'a'
+      	# If master A record is not null, put it in here
+      	if ! dns_zone.mastera.nil?
+          @o += "\t\t\t\t#{dns_zone.mastera}\n\n"
+        end
         @o += fetch_dns_a(zone_name)  
       elsif record_type == 'ptr'
         @o += fetch_dns_ptr(zone_name)
       end
-      
       #@o += assets.collect{|a| a.primary_interface.ip_to_string rescue nil}.join("<br/>")
-      
     end
     
     render(:partial => "output",:object => @o) 
@@ -217,7 +226,6 @@ class DnsZonesController < ApplicationController
   def fetch_dns_ptr(zone_name)
     
     @o = ''
-    
     # find out the range we are parsing in this zone.
     ranges = []
     zone_name.split(".").map{|a| 
@@ -253,14 +261,14 @@ class DnsZonesController < ApplicationController
     range_address = ranges.join(".") + "/#{netmask}"
     
     # Call in cidr, find all interface under this range.
-    interfaces = Networking.get_interfaces_in_range(range_address).sort{|a,b| a.asset.name <=> b.asset.name}
+    interfaces = Networking.get_interfaces_in_range(range_address).sort{|a,b| a.ip <=> b.ip}
 
     # Find asset for each interface
     # If asset is Server, we need to look up two things
     # 1. If ip is drac, we will add "-d" to the hostname
     # 2. Maybe for vip, we need to ptr to it, but on the second thought, that shouldn't be.    
     for interface in interfaces
-      
+
       # Build the ip correct for this zone
       ips = []
       ip_parts = interface.ip_to_string.split(".")
@@ -283,6 +291,9 @@ class DnsZonesController < ApplicationController
           name = interface.vips[0].name          
         elsif interface.vips.length == 1
           name = interface.vips[0].name
+        # Network asset with named interface
+        elsif interface.asset.resource_type == 'Network' and interface.name and interface != interface.asset.primary_interface and ! interface.name.empty?
+          name = interface.name + '.' + interface.asset.name
         else
           name = interface.asset.name  
         end
@@ -296,7 +307,7 @@ class DnsZonesController < ApplicationController
     return @o
 
     rescue Exception => exc
-       flash[:interface] = "##ERROR## Fetch failed following reason: #{exc.message}\n"     
+       flash[:interface] = "##ERROR## Fetch failed following reason: #{exc.message}\n"
 
           
   end
@@ -331,9 +342,8 @@ class DnsZonesController < ApplicationController
     end
 
     
-    @o += "; Total of #{all_dns_zones[zone_name].length} assets\n\n"
+#    @o += "; Total of #{all_dns_zones[zone_name].length} assets\n\n"
 
-   
     # Now we have each asset throw into the bucket of each zone file. 
     # It's time to build the config for the requested zone
     for asset in all_dns_zones[zone_name]
@@ -348,6 +358,22 @@ class DnsZonesController < ApplicationController
             @o += "; #{asset.name} DOESN'T have IP assigned.\n"  
           end
         end
+
+        # For network equipment, they have multiple interfaces
+        # and if interface has name assigned to it, it should create record for that
+        if asset.resource_type == 'Network' and asset.non_primary_interfaces.length > 0
+          begin
+            asset.non_primary_interfaces.sort_by{|a| (a && a.send(:name)) || ""}.each{|i|
+              # If name wasn't nil and not empty
+              if !i.name.nil? and ! i.name.empty?
+                @o += "#{i.name}.#{asset.name}. \t\tA\t\t #{i.ip_to_string}\n"
+              end
+            }
+          rescue Exception => e
+            @o += "; #INVALID# #{asset.name}: " + e + "\n"
+          end
+        end
+
         
         # If drac exist for server, we will add them here
         # Need to add "-d" to the host name
@@ -358,43 +384,26 @@ class DnsZonesController < ApplicationController
       # If record is of type "DnsCname", it could have multiple A record
       # So we treat them with some special care.
       else
+        # Check if cname is pointing to external
+        if ! asset.resource.external.nil? and ! asset.resource.external.empty?
+          @o += "#{asset.name}. \t\tCNAME\t\t #{asset.resource.external}.\n"
         # Check if cname is pointing to any host
-        if asset.resource.cname_assets.length < 1
-          @o += "; #{asset.name} DOESN'T have IP assigned.\n"
-        end
-        for cname_detail_asset in asset.resource.cname_assets
-          if ! cname_detail_asset.primary_interface.nil? 
-            @o += "#{asset.name}. \t\tA\t\t #{cname_detail_asset.primary_interface.ip_to_string}\n"
+        elsif asset.resource.cname_assets.length > 0 
+          for cname_detail_asset in asset.resource.cname_assets
+            if ! cname_detail_asset.primary_interface.nil? 
+              @o += "#{asset.name}. \t\tA\t\t #{cname_detail_asset.primary_interface.ip_to_string}\n"
+            end
           end
+        else
+          @o += "; #{asset.name} DOESN'T have IP assigned.\n"
         end
       end
     end    
     
-    # Here is some dark stuff for search for internal drac interfaces
-    
-    # Find if the last part of the domain is a "int"(internal), if so, switch to "com"
-    parts = zone_name.split(".")
-    if parts[parts.length - 1] == 'int'
-      parts[parts.length - 1] = 'com'
-    end
-    zone_name = parts.join(".")
-
-    if ! all_dns_zones[zone_name].nil?
-      for asset in all_dns_zones[zone_name]
-        # If drac exist for server, we will add them here
-        # Need to add "-d" to the host name
-        if ! asset.drac_interface.nil? and asset.resource_type == "Server"
-          drac_name = convert_to_drac_name(asset.name)
-          @o += "#{drac_name}. \t\tA\t\t #{asset.drac_interface.ip_to_string}\n"
-        end
-        
-      end
-    end
-    
     return @o
     
     rescue Exception => exc
-      flash[:interface] = "##ERROR## Fetch failed with following reason: #{exc.message}\n"    
+      flash[:interface] = "##ERROR## Fetch failed with following reason: #{exc.message}\n#{exc.backtrace}"
   end
 
   def convert_to_drac_name(name)

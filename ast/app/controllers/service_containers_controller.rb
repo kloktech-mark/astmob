@@ -181,12 +181,16 @@ class ServiceContainersController < ApplicationController
           end
         end
       end     
+      # If no match is found, skip to next
+      if done == 0
+        @json = "{}"
+        next
+      end
       @service_container = ServiceContainerDetail.find_all_by_nagios_host_group_id(@nagios_host_group)
       # Determine which containers have checks, and get rid of the ones that don't.
       @service_container.each do |a|
         @service_check = ServiceCheckDetail.find(:all, :conditions => ["service_container_id = '#{a.service_container_id}'"])          
         if @service_check.length == 0
-          #puts a.inspect
           @service_container.delete(a)
         end
       end
@@ -221,7 +225,7 @@ class ServiceContainersController < ApplicationController
                   parent = ServiceCheck.find(:first, :conditions => ["id = '#{b.service_check.parent_id}'"])
                   @json += '"parent": "' + parent.name + '",' + "\n"
                 end
-                @json += '"frequency": ' + b.service_check.frequency.to_s + ',' + "\n"
+                #@json += '"frequency": ' + b.service_check.frequency.to_s + ',' + "\n"
                 command_arr = b.service_check.definition.split('!')
                 command_arr.push("__END_OF_COMMAND_ARRAY__")
                 d = command_arr.length

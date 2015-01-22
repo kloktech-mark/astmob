@@ -76,7 +76,7 @@
                                 :method => :delete
                                 %>
                   
-                  <%= truncate(escalation.nagios_service_escalation_template.name, 50) %>
+                  <%= truncate(escalation.nagios_service_escalation_template.name, 50) rescue nil%>
                   (<%= escalation.nagios_contact_groups.collect{|a| a.name}.join(",") %>)
                 </td>
               </tr>

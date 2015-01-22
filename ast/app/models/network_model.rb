@@ -15,4 +15,7 @@
 class NetworkModel < ActiveRecord::Base
   has_many :networks
   
+  def model_name
+    manufacture + " " + model
+  end
 end

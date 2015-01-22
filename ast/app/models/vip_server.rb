@@ -13,6 +13,6 @@
 # limitations under the License.
 #
 class VipServer < ActiveRecord::Base
-  belongs_to :vip_asset, :class_name => "Assets", :foreign_key => 'vip_asset_id'
+  belongs_to :vip_asset, :class_name => "Asset", :foreign_key => 'vip_asset_id'
   belongs_to :asset
 end
