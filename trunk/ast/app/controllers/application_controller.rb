@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # :secret => '9d2eebad4bc10953ad230a2db7c61251'
 
   
-  audit DnsZone, Vip, NagiosHostGroup, NagiosService, ServiceContainer, Asset => { :except => :ocs_history }, Interface => { :parent => :asset }, DnsCnameDetail => {:parent => :dns_cname}
+  audit VlanDetail, Vlan, Colo, Subnet, DnsZone, Vip, NagiosHostGroup, NagiosService, ServiceContainer, Asset => { :except => :ocs_history }, Interface => { :parent => :asset }, DnsCnameDetail => {:parent => :dns_cname}
   
   # Find nagios hostgroup
   def nagios_find_my_hostgroup(hostname,hostgroup_map = nil)
@@ -152,7 +152,6 @@ class ApplicationController < ActionController::Base
 
 protected
   def current_user
-    @user = request.env['HTTP_REMOTE_USER']
+    @user = request.env['HTTP_REMOTE_USER']?request.env['HTTP_REMOTE_USER']:request.env['REMOTE_USER']
   end
-  
 end

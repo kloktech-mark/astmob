@@ -76,7 +76,7 @@ class NetworkModelsController < ApplicationController
     respond_to do |format|
       if @network_model.update_attributes(params[:network_model])
         flash[:notice] = 'NetworkModel was successfully updated.'
-        format.html { redirect_to(@network_model) }
+        format.html { render :action => "edit" }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

@@ -68,7 +68,8 @@ class ServersController < ApplicationController
         # If server is saved correctly, we'll assign drac ip to the box
         Networking.get_drac_ip(@server.asset)
         flash[:notice] = 'Server was successfully created.'
-        format.html { redirect_to(@server) }
+        format.html { render :action => "edit" }
+        #format.html { redirect_to(@server) }
         format.xml  { render :xml => @server, :status => :created, :location => @server }
       else
         format.html { render :action => "new" }
@@ -89,20 +90,13 @@ class ServersController < ApplicationController
     
     respond_to do |format|
       if @server.save && @server.asset.save
-        #raise Server.find(params[:id]).asset.colo.inspect + old_colo.inspect
         if old_colo != Server.find(params[:id]).asset.colo
-          #raise @server.asset.colo.inspect
-          #raise old_colo.inspect
-
           # Remove all interfaces that servers owns
           Interface.destroy(@server.asset.interfaces)
-
           # Clean out the array so subsequent display of the asset looks right.
           @server.asset.interfaces = {}
-
           # Create a drac ip for the asset
           Networking.get_drac_ip(@server.asset)
-
         end
         flash[:notice] = 'Server was successfully updated.'
         format.html { render :action => "edit" }
@@ -259,18 +253,4 @@ class ServersController < ApplicationController
     end
   end
 
-  def fff
-    @o = ''
-    interfaces = Interface.find(:all)
-    
-    for interface in interfaces
-
-      if interface.vlan_detail.nil?
-        @o += "#{interface.id} - #{interface.asset.name} - #{interface.ip_to_string} <br/>" 
-      end
-    end
-    
-    render(:partial => "dns_zones/output",:object => @o) 
-  end
-  
 end

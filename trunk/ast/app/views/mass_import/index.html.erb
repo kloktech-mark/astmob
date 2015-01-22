@@ -1,5 +1,65 @@
+Mass Ops<br/>
+<b>Color -> Vlan subnet</b> [?]
+For ex: colo_name,vlan_name,subnet <br>
+<pre>
+mci131,NET-EQUIP,10.144.48.0/27
+</pre>
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_subnet} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "80" %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+<b>Network Add IP with interface name to Network Asset </b> [?]
+For ex: ip,interface_name,asset_name,primary_or_not(1 for primary,0 for not) <br>
+<pre>
+10.20.10.10,ae0,abc101.example.com,1
+</pre>
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_add_interface} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "80" %>
+  <%= f.hidden_field :asset_type, :value => 'Network' %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+<b>Network Add with IP with optional Manufacture and model</b> [?]
+For ex: (hostname,ip,Manufacture,model)<br/>
+<pre>
+sw01.ipp1.example.com,10.11.12.1,Cisco,ex4500
+</pre>
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_add_generic} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.hidden_field :asset_type, :value => 'Network' %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+
+<b>Pdu Add with IP with optional Manufacture and model</b> [?]
+For ex: (hostname,ip,Manufacture,model) sw01.ipp1.example.com,10.11.12.1,Cisco,ex4500
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_add_generic} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.hidden_field :asset_type, :value => 'Pdu' %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+<b>Free Server Add
+For ex: hostname
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_free} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.select("colo_id", @colos) %>
+  <%= f.hidden_field :asset_type, :value => 'Server' %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+
+<b>Video Add with IP with optional Manufacture and model</b> [?]
+For ex: hostname,ip, sat101.ipp1.example.com,10.11.12.1,Erisson,sat110
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_video} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Import" %>  
+<% end %>
+<br/>
+
 <b>Mass Server Add with Mac</b> [?]
-For ex: hostname|mac, r101.atl15.yahoo.com|0025902BE9D6
+For ex: r101.atl15.yahoo.com|0025902BE9D6
 <% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_server_mac} ) do |f| -%>
   <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
   <%= f.select("vlan_detail_id", @vlan_details) %>
@@ -21,6 +81,29 @@ For ex: name|row|rack|pos
 <% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_rack} ) do |f| -%>
   <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
   <%= f.submit "Import" %>
+<% end %>
+<br/>
+
+<b>Mass Asset Delete <font color="red">Use with CAUTION!!</font></b> [?]
+For ex: One hostname per line.
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_delete} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Delete" %>  
+<% end %>
+<br/>
+<b>Mass interface Delete <font color="red">Use with CAUTION!!</font></b> [?]
+For ex: One ip per line.
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :mass_delete_interface} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Delete" %>  
+<% end %>
+<br/>
+<b>IP Mapping</b> [?]
+Nmap command = nmap -sP -oG /tmp/d --max-retries 3 -n 192.168.1.0/24
+For ex: each line = "Host: 8.22.63.36 () Status: Up"
+<% form_for(:mass_import, :url => {  :controller => :mass_import, :action => :nmap_result} ) do |f| -%>
+  <%= text_area :mass_import, :data, :rows => "10", :cols => "50" %>
+  <%= f.submit "Check" %>  
 <% end %>
 <br/>
 

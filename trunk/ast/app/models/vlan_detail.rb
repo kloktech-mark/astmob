@@ -15,16 +15,22 @@
 class VlanDetail < ActiveRecord::Base
   require 'networking'
 
+  validates_uniqueness_of :vlan_id, :scope => :colo_id
+
   belongs_to :colo
   belongs_to :vlan
   
   has_many :interfaces, :dependent => :destroy
+  has_many :assets, :through => :interfaces
+
   
   validates_presence_of :colo_id
   validates_presence_of :vlan_id
   validates_presence_of :subnet
 
-  # To handle special drac case where subnet is broken into two subnet in AST but not in actual host configuratino.  It was done that way so drac and network equipment have their own clean subnet
+  validate :subnet_must_be_valid_cidr
+
+  # To handle special drac case where subnet is broken into two subnet in AST but not in actual host configuration.  It was done that way so drac and network equipment have their own clean subnet
   def subnet_of_same_vlan()
      
     # We want to do this with drac only, so this would be one hard coded vlan number here
@@ -50,4 +56,16 @@ class VlanDetail < ActiveRecord::Base
     Networking.netmask(self.subnet_of_same_vlan)   
   end
 
+  def network()
+    cidr = NetAddr::CIDR.create(subnet)
+    cidr.network()
+  end
+
+  def subnet_must_be_valid_cidr
+    begin
+      cidr = NetAddr::CIDR.create(subnet)
+    rescue
+      errors.add(:subnet, "invalid specification: '#{subnet}'")
+    end
+  end
 end

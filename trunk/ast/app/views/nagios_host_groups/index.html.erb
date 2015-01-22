@@ -39,10 +39,12 @@
     </td>
     <td>
         <% for service in @nagios_host_group.nagios_services %>
-          <b><%=h service.name %></b> <br/>
+          <b>
+            <%= link_to service.name, edit_nagios_service_path(service) %>
+          </b> <br/>
         <% end %>
     	<% for service_container in @nagios_host_group.service_containers %>
-			  <%=h service_container.name %><br/>
+        <%= link_to service_container.name, edit_service_container_path(service_container) %><br/>
 			<% end %>
     </td>
   </tr>

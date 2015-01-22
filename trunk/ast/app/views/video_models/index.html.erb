@@ -1,0 +1,22 @@
+<h1>Listing video_models</h1>
+
+<table>
+  <tr>
+    <th>Manufacture</th>
+    <th>Model</th>
+    <th colspan="2">Actions</th>
+  </tr>
+
+<% for video_model in @video_models %>
+  <tr>
+    <td><%=h video_model.manufacture rescue nil%></td>
+    <td><%=h video_model.model rescue nil%></td>
+    <td><%= link_to 'Edit', edit_video_model_path(video_model) %></td>
+    <td><%= link_to 'Destroy', video_model, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New video_model', new_video_model_path %>

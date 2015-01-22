@@ -1,4 +1,4 @@
-<h1>Search result for "<%= @s[:search] %>".
+<h1>Search result for "<%= @s[:search] rescue nil%>".
 
 <% if  @results.nil? || @results.total < 1 %>
 No Asset Found</h1>
@@ -13,9 +13,11 @@ No Asset Found</h1>
   
   <table>
     <tr>
+      <th>ID</th>
       <th>Name</th>
       <th>Colo</th>
       <th>Type</th>
+      <th>QR</th>
   
     </tr>
   
@@ -27,16 +29,27 @@ No Asset Found</h1>
         
       <% end %>
       <tr>
-        <td><%= link_to a.name, edit_polymorphic_path(a.resource) %></td>
+        <td><%= a.id rescue nil%></td>
+        <td><%= link_to a.name, edit_polymorphic_path(a.resource) rescue nil%></td>
 
-        <!-- <td><%=h a.name %></td> -->
         <td><%=h a.colo.name rescue nil %></td>
-        <td><%=h a.resource_type %></td>    
-        <!--
-        <td><%= link_to 'Show', a.resource %></td>
-        <td><%= link_to 'Edit', edit_polymorphic_path(a.resource) %></td>
-        <td><%= link_to 'Destroy', url_for( :controller => a.resource_type.pluralize, :action => 'destroy', :id => a.resource_id), :confirm => 'Are you sure?' %></td>
-        -->
+        <td><%=h a.resource_type rescue nil %></td>    
+        <td>
+          <% #qr = RQRCode::QRCode.new(edit_polymorphic_url(a.resource)) %>
+          <table class="qr-code">
+          <% #qr.modules.each_index do |x| %>
+            <tr>
+            <% #qr.modules.each_index do |y| %>
+             <% #if qr.dark?(x,y) %>
+              <td class="black"/>
+             <% #else %>
+              <td class="white"/>
+             <% #end %>
+            <% #end %>
+            </tr>
+          <% #end %>
+          </table>
+        </td>    
       </tr>
     <% end %>
   <% end %>

@@ -4,16 +4,16 @@
 
 <% form_for(@vip) do |f| %>
 
-  <%= render (:partial => "assets/mini_new_name_only", :object => @vip.asset) %>
+  <%= render(:partial => "assets/mini_new_name_only", :object => @vip.asset) %>
 
 
   <p>
     <b>Hosting Server</b><br />
-    <%= f.collection_select(:hoster_id, Asset.find(:all, :order => :name), "id", "name") %>
+    <%= f.collection_select(:hoster_id, Asset.find(:all, :order => :name, :conditions => ['name LIKE ?', "ha%"]), "id", "name") %>
   </p>
 
   
-  <%= render (:partial => "interfaces/mini_edit_vip", :object => @vip) %>
+  <%= render(:partial => "interfaces/mini_edit_vip", :object => @vip) %>
 
   <p>
     <b>Proto</b><br />
@@ -27,7 +27,7 @@
   
   <p>
     <b>Host Belonging to this Vip</b><br />
-    <%= render (:partial => "vip_servers/mini_edit", :object => @vip.asset) %>
+    <%= render(:partial => "vip_servers/mini_edit", :object => @vip.asset) %>
   </p>
   
   

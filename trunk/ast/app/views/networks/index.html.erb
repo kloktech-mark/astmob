@@ -1,5 +1,7 @@
 <h1>Listing network gears</h1>
 
+<%= link_to 'New network', new_network_path %>
+<%= will_paginate @servers %>
 <table>
   <tr>
     <th>Name</th>
@@ -8,21 +10,34 @@
     <th>IP</th>
   </tr>
 
-<% for network in @networks.sort{|a,b| a.name<=>b.name} %>
+<% for network in @networks %>
   <tr class=<%= cycle('row_odd','row_even')%> >
     <td>
       <%= link_to '[X]', network, :confirm => 'Are you sure?', :method => :delete %>
       
       <%= link_to network.name, edit_network_path(network) %>
     </td>    
-    <td><%= network.colo.name %></td>
+    <td><%= network.colo.name rescue nil%></td>
      
     <td><%=h network.network_model.name rescue nil %></td>
-    <td><%=h network.asset.primary_interface.ip_to_string rescue nil %></td>
+    <td>
+      <table>
+        <% for o in network.asset.interfaces %>
+          <tr>
+            <td>
+              <%= o.ip_to_string %>
+              <% if o.name and !o.name.empty? %>
+                (<%= o.name rescue nil %>)
+              <% end %>
+            </td>
+           </tr>
+        <% end %>
+      </table>
+    </td>
+
   </tr>
 <% end %>
 </table>
 
 <br />
-
 <%= link_to 'New network', new_network_path %>

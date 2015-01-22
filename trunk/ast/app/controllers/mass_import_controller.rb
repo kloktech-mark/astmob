@@ -25,6 +25,10 @@ class MassImportController < ApplicationController
         @vlan_details << [v.colo.name + ' - ' + v.vlan.name + ' - ' + v.vlan.vlan_number.to_s, v.id]
       end
     }
+    @colos = []
+    Colo.all.sort{|a,b| a.name.downcase <=> b.name.downcase}.each{|c| 
+      @colos << [c.name, c.id]
+    }
        
      #raise @vlan_details.inspect
   end
@@ -60,7 +64,7 @@ class MassImportController < ApplicationController
         Networking.get_drac_ip(@server.asset)
         
         # And we will assign a vlan error as well.
-        Networking.get_an_ip(@server.asset,vlan_detail.id)
+        Networking.get_an_ip(@server.asset,vlan_detail)
 
         @asset.primary_interface.update_attribute(:mac, mac)
         
@@ -68,6 +72,36 @@ class MassImportController < ApplicationController
         @o += "Server was successfully created.\n"
       else
         @o += "#{name} FAILED with \"#{@server.asset.errors.full_messages}\" \n"
+      end
+    end
+    render :template => "mass_import/mass_server.html.erb"
+  end
+
+  def mass_free
+    @o = ''
+    
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    
+    # Find colo 
+    colo = Colo.find(params[:mass_import][:colo_id])
+    
+    @o += "colo: " + colo.name + "\n"
+    # Parse each row in the text area
+    for i in data
+      @server = Server.new()
+      @asset = Asset.new(:name => i)
+      @asset.colo = colo
+      @server.asset = @asset
+      
+      if @server.save
+        # If server is saved correctly, we'll assign drac ip to the box
+        Networking.get_drac_ip(@server.asset)
+        
+        # And we will also assign a ip to destination 
+        @o += "#{i} was successfully created.\n"
+      else
+        @o += "#{i} FAILED with \"#{@server.asset.errors.full_messages}\" \n"
       end
     end
     render :template => "mass_import/mass_server.html.erb"
@@ -94,10 +128,10 @@ class MassImportController < ApplicationController
         Networking.get_drac_ip(@server.asset)
         
         # And we will assign a vlan error as well.
-        Networking.get_an_ip(@server.asset,vlan_detail.id)
+        Networking.get_an_ip(@server.asset,vlan_detail)
         
         # And we will also assign a ip to destination 
-        @o += "Server was successfully created.\n"
+        @o += "#{i} was successfully created.\n"
       else
         @o += "#{i} FAILED with \"#{@server.asset.errors.full_messages}\" \n"
       end
@@ -157,182 +191,6 @@ class MassImportController < ApplicationController
     end
   end
 
-  # Import Nagios Services
-  def nagios_service
-    @o = ''
-    # Take text input from mass_import params split by new line.
-   
-    # Parse the textarea with each newline
-    data = params[:mass_import][:data].split("\r\n")
-    hostgroup_map = nagios_hostgroup_map()
-    
-    # Parse each row in the text area
-    for i in data
-      
-      j = i.split("||")
-      # Strip out the space before and after hostname & IP
-      name = j[0].lstrip.rstrip
-      template = j[1].lstrip.rstrip
-      host_name = j[2].lstrip.rstrip
-      check_command = j[3].lstrip.rstrip
-
-      # See if the service exist already
-      service = NagiosService.find(:first, :conditions => "name = '#{name}' and check_command = '#{check_command}'")
-      
-      if service.nil?
-        #@o += "FOUND #{host_name} #{name} (#{template}) - #{check_command.slice!(0..30)}\n"
-
-        service = NagiosService.new(:name => name, :check_command => check_command)
-        service_template = NagiosServiceTemplate.find_or_create_by_name(template)
-        service.nagios_service_template = service_template
-    
-        # If asset is not found in ast, skip it with error message
-        if service.save
-          @o += "#{name} added.\n"
-        else
-          @o += "#{name} failed.\n"
-        end
-      end
-      
-      # Now we add the relationship between host and service
-
-      
-      hostgroup = nagios_find_my_hostgroup(host_name,hostgroup_map)
-      
-      if ! hostgroup.nil?
-        service_detail = NagiosServiceDetail.find_or_create_by_nagios_host_group_id_and_nagios_service_id(hostgroup.id,service.id)
-      else
-        @o += "#{host_name} not found in any hostgroup.\n"
-      end
-      
-    end
-    
-    if @o.empty?
-      @o += "All service/host imported correctly.\n"
-    end
-  end
-  
-  # Import Nagios Services Escalation
-  def nagios_service_escalation
-    @o = ''
-    # Take text input from mass_import params split by new line.
-   
-    # Parse the textarea with each newline
-    data = params[:mass_import][:data].split("\r\n")
-    
-    hostgroup_map = nagios_hostgroup_map()
-    
-    #@o += hostgroup_map.inspect
-    
-    # Parse each row in the text area
-    for i in data
-
-      j = i.split("||")
-      # Strip out the space before and after hostname & IP
-      template = j[0].lstrip.rstrip
-      host_name = j[1].lstrip.rstrip
-      service_description = j[2].lstrip.rstrip
-      contact_groups = j[3].lstrip.rstrip.split(",")
-      
-      service_escalation_template = NagiosServiceEscalationTemplate.find_or_create_by_name(template)
-      
-      # Find service 
-      service = NagiosService.find_by_name(service_description)
-       
-      # Find hostgroup
-      hostgroup = nagios_find_my_hostgroup(host_name,hostgroup_map)
-
-      if hostgroup.nil? || service.nil?
-        #@o += "ERROR: Couldn't find hostgroup for #{host_name}.\n"
-        
-      else
-        #@o += "found #{host_name} in group  #{hostgroup.name}.\n"
-
-        service_detail = NagiosServiceDetail.find(:first, :conditions => "nagios_host_group_id = #{hostgroup.id} AND nagios_service_id = #{service.id}")
-        
-        # If we found service_detail, let add the escalation
-        if ! service_detail.nil?
-          # Let's see if we already created.
-          service_escalation = NagiosServiceEscalation.find(:first, :conditions => "nagios_service_detail_id = '#{service_detail.id}' AND nagios_service_escalation_template_id = '#{service_escalation_template.id}'")
-          
-          
-          if service_escalation.nil?
-            service_escalation = NagiosServiceEscalation.create(:nagios_service_detail_id => service_detail.id, :nagios_service_escalation_template_id => service_escalation_template.id)
-            
-            # Find the contact group and link them to this service escalation
-            for contact_group in contact_groups 
-              c = NagiosContactGroup.find_or_create_by_name(contact_group)
-              NagiosContactGroupServiceEscalationDetail.create(:nagios_contact_group_id => c.id, :nagios_service_escalation_id => service_escalation.id)
-            end
-            
-            @o += "#{hostgroup.name} with #{service_description} escalation added.\n"
-          end          
-        end
-
-          
-      end
-      
-      
-    end
-    
-    render :template => "mass_import/nagios_service.html.erb"
-  end
-  
-  
-  # Import Nagios Services Escalation
-  def nagios_service_group
-    @o = ''
-    # Take text input from mass_import params split by new line.
-   
-    # Parse the textarea with each newline
-    data = params[:mass_import][:data].split("\r\n")
-    
-    hostgroup_map = nagios_hostgroup_map()
-   
-    # Parse each row in the text area
-    for i in data
-
-      j = i.split("||")
-      # Strip out the space before and after hostname & IP
-      servicegroup_name = j[0].lstrip.rstrip
-      # even number = hostname, odd number = service name
-      members = j[1].lstrip.rstrip.split(",")
-      
-      service_group = NagiosServiceGroup.find_or_create_by_name(servicegroup_name)
-      
-      count=0
-
-      # Let's find member and associate it hostgroup + service to service group
-      for i in members
-        # if even number
-        if ( count % 2 == 0 )
-          hostgroup = nagios_find_my_hostgroup(i,hostgroup_map)
-          h = i
-        else
-          service = NagiosService.find_by_name(i)
-          
-          if hostgroup.nil? or service.nil?
-            @o += "ERR: either hostgroup or service is not found. #{h}:#{i}\n"
-          else
-            NagiosServiceGroupDetail.find_or_create_by_nagios_service_group_id_and_nagios_host_group_id_and_nagios_service_id(
-                                            service_group.id,hostgroup.id,service.id)
-            
-#            NagiosServiceGroupDetail.create(:nagios_service_group => service_group, 
-#                                            :nagios_host_group => hostgroup,
-#                                            :nagios_service => service)
-                       
-          end
-          
-        end
-        count = count + 1
-      end
-
-      
-    end
-    
-    render :template => "mass_import/nagios_service.html.erb"
-  end
-
   def mass_rack
     @o = ''
     # Take text input from mass_import params split by new line.
@@ -366,14 +224,370 @@ class MassImportController < ApplicationController
       else
         @o += "!! #{name} does NOT exist !!<br/>"  
       end
+    end
+    render :template => "mass_import/nagios_service.html.erb"
+  end  
 
+  # Mass video asset import
+  def mass_video
+    @o = ''
+    # Take text input from mass_import params split by new line.
+   
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    
+    # Parse each row in the text area
+    for i in data
+      
+      j = i.split(",")
+      # Strip out the space before and after hostname & IP
+      host = j[0].lstrip.rstrip.downcase
+      ip = j[1].lstrip.rstrip
+
+      # Pick up the vlan_detail and colo
+      vlan_detail = Networking.get_vlan_for_ip(ip)
+      if vlan_detail.nil?
+        @o += "#{ip} isn't in any vlan, skipping #{host}\n" 
+        next
+      end
+
+      asset = Asset.find(:first, :conditions => ["name = ?", host])
+
+      if asset.nil?
+        video = Video.new()
+        asset = Asset.new(:name => host)
+        asset.colo = vlan_detail.colo
+        video.asset = asset
+        video.save
+        @o += "Created #{host}.\n"
+      else
+        video = asset.resource
+      end
+      
+      # Pick up video model information if presented.
+      if (!j[2].nil? and !j[3].nil?) 
+        manufacture = j[2].lstrip.rstrip
+        model = j[3].lstrip.rstrip
+        video_model = VideoModel.find_or_create_by_manufacture_and_model(manufacture,model)
+        video.video_model = video_model
+        video.save
+      end
+  
+      # Check if IP is already used, if so, skip.
+      if Interface.find(:first, :conditions => ["ip = ?", Networking.ip_to_i(ip)]).nil?
+        i = Interface.new()
+        i.asset = video.asset
+        i.ip = ip
+        i.vlan_detail = vlan_detail
+        i.save
+      else
+        @o += "#{ip} already taken, skipping.\n"
+        next
+      end
+
+      @o += "#{host} with ip #{ip} imported successfully.\n"
+    end
+
+    render :template => "mass_import/mass_server.html.erb"
+  end
+
+  def mass_add_generic
+    @o = ''
+   
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    asset_type = params[:mass_import][:asset_type]
+    
+    # Parse each row in the text area
+    for i in data
+      
+      j = i.split(",")
+      # Strip out the space before and after hostname & IP
+      host = j[0].lstrip.rstrip.downcase
+      ip = j[1].lstrip.rstrip
+
+      # Pick up the vlan_detail and colo
+      vlan_detail = Networking.get_vlan_for_ip(ip)
+      if vlan_detail.nil?
+        @o += "#{ip} isn't in any vlan, skipping #{host}\n" 
+        next
+      end
+
+      asset = Asset.find(:first, :conditions => ["name = ?", host])
+
+      if asset.nil?
+        this_asset = Object::const_get(asset_type).new()
+        asset = Asset.new(:name => host)
+        asset.colo = vlan_detail.colo
+        this_asset.asset = asset
+        this_asset.save
+        @o += "Creating #{host}.\n"
+      else
+        this_asset = asset.resource
+        # If existing asset isn't the right asset type, delete and create
+        if ! this_asset.is_a? Object::const_get(asset_type)
+          @o += "<font color='red'>Error</font>: #{host}(#{ip}) should be #{asset_type} but is in AST as #{this_asset.class}, deleting existing asset and recreate.\n"
+          asset.destroy
+          this_asset = Object::const_get(asset_type).new()
+          asset = Asset.new(:name => host)
+          asset.colo = vlan_detail.colo
+          this_asset.asset = asset
+          this_asset.save
+          @o += "Re-created #{host} as #{asset_type}.\n"
+        end
+      end
+      
+      if ! asset.id.nil?
+        i = Interface.find(:first, :conditions => ["ip = ?", Networking.ip_to_i(ip)])
+  
+        # Check if IP is already used, if so, skip.
+        if i.nil?
+          new_i = Interface.new()
+          new_i.asset = this_asset.asset
+          new_i.ip = ip
+          new_i.vlan_detail = vlan_detail
+          new_i.save
+        else
+          if i.asset == this_asset.asset
+            @o += "#{host} already has #{ip}.\n"
+          else
+            @o += "<font color='red'>Err</font>: #{ip} is taken by #{i.asset.name}, skipping.\n"
+          end
+        end
+        
+        # Pick up asset type model information if presented.
+        if (!j[2].nil? and !j[3].nil?) 
+          manufacture = j[2].lstrip.rstrip
+          model = j[3].lstrip.rstrip
+  
+          case asset_type
+          when "Network"
+            asset_model = NetworkModel.find_or_create_by_manufacture_and_model(manufacture,model)
+            @o += "added to model '#{asset_model.manufacture} - #{asset_model.model}'"
+            this_asset.network_model = asset_model
+            this_asset.save
+          when "Pdu"
+            asset_model = PduModel.find_or_create_by_manufacture_and_model(manufacture,model)
+            this_asset.pdu_model = asset_model
+            this_asset.save
+          end
+        end
+        @o += "#{host} with ip #{ip} imported successfully.\n"
+      else
+        @o += "<font color='red'>Err</font>: Unable to create asset with name '#{host}', check if it's valid.\n"
+      end
+    end
+    render :template => "mass_import/mass_server.html.erb"
+  end
+
+  def nmap_result
+    @o = ''
+   
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    asset_type = params[:mass_import][:asset_type]
+    
+    ip_list = Hash.new
+    ip_list['null'] = Hash.new
+    ip_list['null']['null'] = Array.new
+    # Parse each row in the text area
+    for i in data
+      j = i.split
+      # Strip out the space before and after hostname & IP
+      ip = j[1].lstrip.rstrip.downcase
+      if ( ip.split(".").length == 4 )
+        #ip_list << ip
+        vlan_detail = Networking.get_vlan_for_ip(ip)
+        if vlan_detail.nil?
+          ip_list['null']['null'] << ip
+        else
+          name = vlan_detail.colo.name + ':' + vlan_detail.vlan.name
+          if ip_list[vlan_detail.colo.name].nil?
+            ip_list[vlan_detail.colo.name] = Hash.new
+          end
+          if ip_list[vlan_detail.colo.name][vlan_detail.vlan.name].nil?
+            ip_list[vlan_detail.colo.name][vlan_detail.vlan.name] = Array.new
+          end
+          ip_list[vlan_detail.colo.name][vlan_detail.vlan.name] << ip
+        end
+      end
+    end
+    ip_list.each do |colo, vlans|
+      @o += "<b>#{colo}</b>\n"
+      vlans.each do |name, ips|
+        @o += "  #{name} - #{ips.length} total IPs\n";
+        if name == 'null'
+          ips.each do |ip|
+            @o += "#{ip} \n";
+          end
+        end
+      end
+      @o += "\n";
+    end
+    #@o += ip_list.inspect
+    render :template => "mass_import/mass_server.html.erb"
+  end
+
+  def mass_add_interface
+    @o = ''
+   
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    asset_type = params[:mass_import][:asset_type]
+    
+    # Parse each row in the text area
+    for i in data
+      
+      j = i.split(",")
+      # Strip out the space before and after hostname & IP
+      ip = j[0].lstrip.rstrip
+      interface_name = j[1].lstrip.rstrip.downcase
+      host = j[2].lstrip.rstrip.downcase
+      primary_bool = j[3].lstrip.rstrip
+
+      # Pick up the vlan_detail and colo
+      vlan_detail = Networking.get_vlan_for_ip(ip)
+      if vlan_detail.nil?
+        @o += "#{ip} isn't in any vlan, skipping #{host}\n" 
+        next
+      end
+
+      asset = Asset.find(:first, :conditions => ["name = ?", host])
+
+      if asset.nil?
+        @o += "Creating #{host}.\n"
+        this_asset = Object::const_get(asset_type).new()
+        asset = Asset.new(:name => host)
+        asset.colo = vlan_detail.colo
+        this_asset.asset = asset
+        this_asset.save
+      else
+        this_asset = asset.resource
+        # If existing asset isn't the right asset type, delete and create
+        if ! this_asset.is_a? Object::const_get(asset_type)
+          @o += "<font color='red'>Error</font>: #{host}(#{ip}) should be #{asset_type} but is in AST as #{this_asset.class}, deleting existing asset and recreate.\n"
+          asset.destroy
+          this_asset = Object::const_get(asset_type).new()
+          asset = Asset.new(:name => host)
+          asset.colo = vlan_detail.colo
+          this_asset.asset = asset
+          this_asset.save
+          @o += "Re-created #{host} as #{asset_type}.\n"
+        end
+      end
+      
+      if ! asset.id.nil?
+        i = Interface.find(:first, :conditions => ["ip = ?", Networking.ip_to_i(ip)])
+  
+        # Check if IP is already used, if so, skip.
+        if i.nil?
+          new_i = Interface.new()
+          new_i.asset = this_asset.asset
+          new_i.ip = ip
+          new_i.vlan_detail = vlan_detail
+          new_i.name = interface_name
+          if primary_bool == "1"
+            new_i.real_ip = true
+          end
+          new_i.save
+        else
+          if i.asset == this_asset.asset
+            @o += "#{host} already has #{ip}.\n"
+          else
+            @o += "<font color='red'>Err</font>: #{ip} is taken by #{i.asset.name}, skipping.\n"
+          end
+        end
+        @o += "#{host} with ip #{ip} imported successfully.\n"
+      else
+        @o += "<font color='red'>Err</font>: Unable to create asset with name '#{host}', check if it's valid.\n"
+      end
+    end
+    render :template => "mass_import/mass_server.html.erb"
+  end
+
+  def mass_delete
+    @o = ''
+    
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    
+    # Parse each row in the text area
+    for i in data
+      name = i.lstrip.rstrip 
+      begin
+        asset = Asset.find_by_name(name)
+        resource = asset.resource
+        resource.destroy
+        @o += "#{name} was successfully deleted.\n"
+      rescue
+        @o += "<font color='red'>Err</font>:#{name} failed deletion.\n"
+      end
       
     end
-    
-    render :template => "mass_import/nagios_service.html.erb"
+    render :template => "mass_import/mass_server.html.erb"
+  end
 
-  end  
-  
-  
+  def mass_delete_interface
+    @o = ''
+    
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    
+    # Parse each row in the text area
+    for i in data
+      ip = i.lstrip.rstrip 
+      begin
+        interface = Interface.find_by_ip(Interface.ip_to_i(ip))
+        interface.destroy
+        @o += "#{ip} was successfully deleted.\n"
+      rescue Exception => e
+        @o += "<font color='red'>Err</font>:#{ip} #{e.message} failed deletion.\n"
+      end
+      
+    end
+    render :template => "mass_import/mass_server.html.erb"
+  end
+
+  def mass_subnet
+    @o = ''
+    
+    # Parse the textarea with each newline
+    data = params[:mass_import][:data].split("\r\n")
+    
+    # Parse each row in the text area
+   for i in data
+      j = i.split(",")
+      # Strip out the space before and after hostname & IP
+      colo_name = j[0].lstrip.rstrip.downcase
+      vlan_name = j[1].lstrip.rstrip
+      subnet = j[2].lstrip.rstrip
+      colo = Colo.find_or_create_by_name(colo_name)
+      vlan = Vlan.find_by_name(vlan_name)
+
+      if ! vlan = Vlan.find_by_name(vlan_name)
+        @o += "<font color='red'>Err</font>: vlan #{vlan_name} was not found.\n"
+        next
+      end
+
+      vd = VlanDetail.new
+      vd.colo = colo
+      vd.vlan = vlan
+
+      # Check for valid subnet
+      begin
+        cidr = NetAddr::CIDR.create(subnet)
+        vd.subnet = subnet
+        vd.save!
+        @o += "#{vd.colo.name} -> #{vd.vlan.name} #{vd.subnet} was successfully added.\n"
+      rescue NetAddr::ValidationError => e
+        @o += "<font color='red'>Err</font>: invalid subnet #{subnet}: #{e.message} #{e.inspect}\n"
+        next
+      rescue Exception => e
+        @o += "<font color='red'>Err</font>: #{colo_name} #{vlan_name} failed: #{e.message}\n"
+        next
+      end
+    end
+    render :template => "mass_import/mass_server.html.erb"
+  end
   
 end

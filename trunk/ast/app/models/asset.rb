@@ -36,6 +36,8 @@ class Asset < ActiveRecord::Base
   # Network interfaces
   has_many :interfaces, :dependent => :destroy
 
+  has_many :vlan_details, :through => :interfaces
+
   # Belongs to colo
   belongs_to :colo
 
@@ -48,7 +50,7 @@ class Asset < ActiveRecord::Base
   # Find which real server an asset has
   has_many :servers_behind_me, :through => :vip_servers, :source => :asset, :foreign_key => "vip_asset_id"
   
-  has_many :vip_before_me, :through => :vip_servers, :source => :asset, :foreign_key => "asset_id"
+  #has_many :vip_before_me, :through => :vip_servers, :source => :asset, :foreign_key => "asset_id"
   
   # Added cname relationship from asset side
   has_many :dns_cname_details, :dependent => :destroy
@@ -66,6 +68,8 @@ class Asset < ActiveRecord::Base
   # Validation method
   validates_uniqueness_of :name
   validates_presence_of :name
+  validates_format_of :name, :with => /^[\w\.\-]+$/, :message => "contains illegal characters, ex: empty space, comma"
+  #validates_format_of :name, :with => /good.suffix$/, :message => "missing proper suffix."
   
   # List out the changes so solr can index them
   def audit_changes()
@@ -114,6 +118,35 @@ class Asset < ActiveRecord::Base
     end
     @ids
   end
+
+  def vip_before_me()
+    vip_servers = VipServer.find(:all, :conditions => "asset_id = #{self.id}") 
+  end
+  
+  # Find non-drac ip.
+  def ipv6_interfaces
+    new_interfaces = []
+    
+    for interface in interfaces
+      if interface.ip_v6
+        new_interfaces << interface  
+      end
+    end
+    
+    new_interfaces
+  end
+  
+  # Find interfaces excluding primary
+  def non_primary_interfaces
+    new_interfaces = []
+    
+    for interface in interfaces
+      if self.primary_interface != interface
+        new_interfaces << interface  
+      end
+    end
+    new_interfaces
+  end
   
   # Find non-drac ip.
   def non_drac_interfaces
@@ -128,16 +161,42 @@ class Asset < ActiveRecord::Base
     new_interfaces
   end
 
+  # See if drac vlan exist
+  def exist_drac_vlan()
+    self.colo.vlan.each{|v|
+      if ( v.drac? )
+        return true
+      end
+    }
+    return false
+  end
+  
   # Find non-drac ip.
   def drac_interface
-    
     for interface in interfaces
       if interface.drac_ip?
         return interface  
       end
     end
-    
     return nil
+  end
+
+  def primary_subnet_v6()
+    # primary_interface might not be available
+    if ( ! self.primary_interface.nil? and self.primary_interface.vlan_detail.subnet_v6 ) 
+      return true
+    end
+    return false
+
+  end
+
+  # Give us a primary interface or nil
+  def primary_interface_has_v6()
+    if (! self.primary_interface.nil? and self.primary_interface.ip_v6 and !self.primary_interface.ip_v6.empty?)
+      return true
+    else
+      return false
+    end
   end
 
   # Give us a primary interface or nil
@@ -167,16 +226,12 @@ class Asset < ActiveRecord::Base
     end
   end  
   
-  # Give us a primary interface or nil
+  # Give us a primary interface including drac
   def primary_interface_including_drac()
-
-
     for interface in interfaces
         return interface
     end
-    #flash[:error] += "Multiple IP without any marked as primary"
     return nil
-
   end   
 
   def com_or_int

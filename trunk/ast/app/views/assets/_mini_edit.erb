@@ -17,14 +17,32 @@
     </tr>
     <tr>
       <td><%= f.collection_select("colo_id", Colo.find(:all), "id", "name") %></td>
-      <td><%= f.text_field (:row, {:size => "1"}) %></td>
-      <td><%= f.text_field (:rack, {:size => "1"}) %></td>
-      <td><%= f.text_field (:pos, {:size => "1"}) %></td>
+      <td><%= f.text_field(:row, {:size => "1"}) %></td>
+      <td><%= f.text_field(:rack, {:size => "1"}) %></td>
+      <td><%= f.text_field(:pos, {:size => "1"}) %></td>
     </tr>
   </table>
   <p>
     <b>Asset Tag</b><br />
     <%= f.text_field :asset_tag, :size => "5" %>
+  </p>
+
+  <p>
+    <b>QR Code</b><br />
+      <% qr = RQRCode::QRCode.new(request.url) %>
+      <table class="qr-code">
+      <% qr.modules.each_index do |x| %>
+        <tr>
+        <% qr.modules.each_index do |y| %>
+         <% if qr.dark?(x,y) %>
+          <td class="black"/>
+         <% else %>
+          <td class="white"/>
+         <% end %>
+        <% end %>
+        </tr>
+      <% end %>
+      </table>
   </p>
   
   <p>

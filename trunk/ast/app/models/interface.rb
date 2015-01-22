@@ -25,6 +25,7 @@ class Interface < ActiveRecord::Base
   has_many :vips, :dependent => :destroy
   
   validates_uniqueness_of :ip
+#  validates_uniqueness_of :ip_v6
   validates_presence_of :vlan_detail_id, :message => "Ip #{} doesn't belong to any vlan."
 
   require 'networking'
@@ -34,17 +35,35 @@ class Interface < ActiveRecord::Base
     # Get the original attributes before type cast
     orig_attr = self.attributes_before_type_cast
 
+    if orig_attr['ip'].nil? or orig_attr['ip'].empty?
+      raise "Need to input IP"
+    end
+
     # Convert the ip to integer
-    self.ip = Networking.ip_to_i(orig_attr['ip'])
+#    begin
+      if orig_attr['ip'] =~ /\./
+        self.ip = Networking.ip_to_i(orig_attr['ip'])
+      end
+#    rescue
+#    end
 
     # Check if vlan_detail is set, if not, let's find it 
     if self.vlan_detail_id.nil?
       self.vlan_detail = Networking.get_vlan_for_ip(orig_attr['ip'])
+
       if self.vlan_detail.nil?
-        raise self.inspect
+        raise "IP doesn't belong to any vlan"
+      end
+      if self.vlan_detail.colo != self.asset.colo and self.vlan_detail.colo.backbone == false
+        raise "IP belongs to colo " + self.vlan_detail.colo.name + " not " + self.asset.colo.name
+      end
+      if ( ! (orig_attr['ip_v6'].nil? or orig_attr['ip_v6'].empty?) ) 
+        v6_vlan_detail = Networking.get_vlan_for_ip(orig_attr['ip_v6'])
+        if self.vlan_detail != v6_vlan_detail
+          raise "IP and IPv6 belongs to different colo->vlan definition"
+        end
       end
     end
-     
   end
 
   def find_ip
@@ -67,15 +86,15 @@ class Interface < ActiveRecord::Base
   end
   
   def drac_ip?
-    
     if self.vlan_detail.vlan.drac
       return true
     else
       return false
     end
-    
   end
-  
 
+  def vlan
+    self.vlan_detail.vlan
+  end
 
 end

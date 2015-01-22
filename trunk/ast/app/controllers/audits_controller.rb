@@ -15,6 +15,7 @@
 class AuditsController < ApplicationController
   
   def index
+
     @audits = Audit.paginate :page => params[:page], :per_page => 15, :order => 'created_at DESC'
     #@audits = Audit.find(:all, :limit => 30, :order => 'created_at DESC') 
     

@@ -30,28 +30,15 @@
     <td>
 		<%= service_container.nagios_service_template.name rescue nil %>
     </td>
-<!--			
-    <td>
-        <%=h truncate(service_container.check_command,60) %> <br/>
-    </td>
-					
-    <td>
-        <%= service_container.autofix %> <br/>
-    </td>	
-	
--->		
-		
 	  <td>
       <% for service in service_container.service_checks.sort{|a,b| a.name <=> b.name}%>          
-        <%= service.name%>
+        <%= link_to service.name, edit_service_check_path(service) %>
                 <% if service.parent_id == 2 %>
                   <%= image_tag("parents-48x48.png", :size => "16x16") %>
                 <% end %>
                 <br/>
       <% end %>
 
-		
-<!--		<br/> -->
     </td>	
   </tr>
 <% end %>

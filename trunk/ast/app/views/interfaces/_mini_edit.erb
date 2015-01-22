@@ -12,20 +12,31 @@
         
     <% for o in mini_edit.interfaces %>
      <tr class=<%= cycle('row_odd','row_even')%> >
-      <td>
+      <td style="border-right:1px solid #000000">
         <%= link_to_remote '[x]',
                     :url => {:controller => 'interfaces', :action => :destroy, :id => o},
                     :update => 'update-interfaces',
                     :confirm => 'Are you sure?',
                     :method => :delete
                     %>
-        <%= o.vlan_detail.vlan.name %>
+        <% if o.vlan_detail.colo != mini_edit.colo %>
+          (<%=o.vlan_detail.colo.name%>)
+        <% end %>
+        <%= link_to o.vlan_detail.vlan.name, edit_vlan_detail_path(o.vlan_detail) %>
+        <br/>
+        <%= o.vlan_detail.netmask %>
+        <br/>
+        <%= o.vlan_detail.gateway %>
       </td>   
       <td>
         <% if ! o.drac_ip? %>
           <% if  o.real_ip %>
-            <b><%= o.ip_to_string %></b>
-             
+            <b><%= o.ip_to_string %>
+            <% if o.ip_v6 and !o.ip_v6.empty? %>
+              <br/>
+              <%= o.ip_v6 %>
+            <% end %>
+            </b> 
           <% else %> 
             <% if mini_edit.non_drac_interfaces.length > 1%>
               <%= link_to_remote '[P]',
@@ -36,14 +47,34 @@
                           %>
             <% end %>                                
             <%= o.ip_to_string %>
+            <% if o.ip_v6 and !o.ip_v6.empty? %>
+              <br/>
+              <%= o.ip_v6 %>
+            <% end %>
           <% end %>
         <% else %>
           <%= o.ip_to_string %>        
+          <% if o.ip_v6 and !o.ip_v6.empty? %>
+            <br/>
+            <%= o.ip_v6 %>
+          <% end %>
         <% end %>
         
       </td>
-      <td><%= o.name %></td>
-      <td><%= o.mac %></td>
+      <td>
+        <%if o.name.nil? or o.name.empty? 
+          o.name = '[Click to set]'
+        end %>
+      <span id="edit_field_name_<%=h o.id%>"><%=h o.name %></span>
+      <%= in_place_editor "edit_field_name_#{o.id}",  :url => url_for(:controller => 'interfaces', :action => :set_interface_name, :id => o.id) %>
+      </td>
+      <td>
+        <%if o.mac.nil? or o.mac.empty? 
+          o.mac = '[Click to set]'
+        end %>
+      <span id="edit_field_mac_<%=h o.id%>"><%=h o.mac %></span>
+      <%= in_place_editor "edit_field_mac_#{o.id}",  :url => url_for(:controller => 'interfaces', :action => :set_interface_mac, :id => o.id) %>
+      </td>
      </tr>
       
     <% end %>
@@ -51,7 +82,7 @@
 
   </p>
   
-  <%= flash[:interface] %> 
+  <font color='red'><%= flash[:interface] %></font>
   
   <fieldset><legend>Assigning IP</legend>
     <table>
@@ -60,8 +91,11 @@
         <td>
           <%= select(:vlan_detail, "vlan_detail_id", 
               VlanDetail.find(:all, 
-              :include => :vlan,
-              :conditions => "colo_id = #{mini_edit.colo_id} AND vlans.drac != '1'").collect {|p| [p.vlan.name, p.id]}, 
+              :include => [:vlan,:colo],
+              :conditions => "(colo_id = #{mini_edit.colo_id} OR colos.backbone = '1') AND vlans.drac != '1'",
+              :order => "colos.name, vlans.name").collect {|p| 
+                ["#{p.colo.name} - #{p.vlan.name}", p.id]
+              }, 
               { :include_blank => true } )%>          
         </td>
       </tr>
@@ -74,7 +108,7 @@
                         %>
     <hr/>
     
-    <% if mini_edit.drac_interface.nil? and mini_edit.resource_type == "Server"%>
+    <% if mini_edit.exist_drac_vlan and mini_edit.drac_interface.nil? and mini_edit.resource_type == "Server"%>
       No Drac IP found.
       <%= submit_to_remote 'add_drac','Add Drac IP',
                           :url => {:controller => 'interfaces' , :action => :add_drac, :id => mini_edit},
@@ -82,10 +116,22 @@
                           %>
       <hr/>
     <% end %>
+
+    <% if mini_edit.primary_subnet_v6 and !mini_edit.primary_interface_has_v6 %>
+      Primary IPv6 missing.
+      <%= submit_to_remote 'add_v6','Add an IPv6 IP',
+        :url => {:controller => 'interfaces' , :action => :add_v6, :id => mini_edit},
+        :update => 'update-interfaces'
+      %>
+      <hr/>
+    <% end %>
     
     <table>
       <tr>
         <td>IP:</td><td><%= text_field :interface, :ip , :size => '15'%></td>
+      </tr>
+      <tr>
+        <td>IPv6(optional):</td><td><%= text_field :interface, :ip_v6 , :size => '15'%></td>
       </tr>
       <tr>
         <td>Name(Optional):</td><td><%= text_field :interface, :name , :size => '15'%></td>
@@ -109,14 +155,21 @@
             <%= select(:multi_ip, "vlan_detail_id", 
                 VlanDetail.find(:all, 
                 :include => :vlan,
-                :conditions => "vlan_details.id IN (#{mini_edit.interfaces.collect{|a| a.vlan_detail.id}.uniq.join(',')}) AND vlans.drac != '1'").collect{|p| [p.vlan.name, p.id]}, 
+                :conditions => "vlan_details.id IN (#{mini_edit.interfaces.collect{|a| a.vlan_detail.id}.uniq.join(',')}) AND vlans.drac != '1'").collect{|p|
+
+                if p.colo_id != mini_edit.colo_id
+                  ["(#{p.colo.name})#{p.vlan.name}", p.id]
+                else 
+                  [p.vlan.name, p.id]
+                end
+                }, 
                 {})%>          
           </td>
         </tr>
        
       </table>
            
-      <%= submit_to_remote 'multi_ip','Add Another IP to Current Vlan',
+      <%= submit_to_remote 'multi_ip_submit','Add Another IP to Current Vlan',
                           :url => {:controller => 'interfaces' , :action => :multi_ip, :id => mini_edit},
                           :update => 'update-interfaces'
                           %>

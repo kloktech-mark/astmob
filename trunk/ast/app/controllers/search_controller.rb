@@ -20,7 +20,8 @@ class SearchController < ApplicationController
   def search
     if ! params[:search][:search].empty?
 
-      @s = params[:search]
+      # Move acts_as_solr's query parsing out here so plugin doesn't mock with input
+      s = params[:search][:search].gsub(/ *: */,"_t:")
       
       # options for solr
       options = {}
@@ -37,11 +38,8 @@ class SearchController < ApplicationController
 
       # we want to capture exception but don't care if search didn't yield anything
       begin 
-        @results = Asset.multi_solr_search(params[:search][:search],options)
+        @results = Asset.multi_solr_search(s,options)
 
-        #@results = Asset.find_by_solr (params[:asset][:search], 
-        #{:facets => {:zeros => false,:fields=>[:colo_id]}
-        #})        
       rescue 
         
       end

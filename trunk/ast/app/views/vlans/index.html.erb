@@ -4,13 +4,16 @@
   <tr>
     <th>Name</th>
     <th>Vlan number</th>
+    <th>Drac</th>
+    <th colspan="2">Actions</th>
   </tr>
+
 
 <% for vlan in @vlans %>
   <tr>
     <td><%=h vlan.name %></td>
     <td><%=h vlan.vlan_number %></td>
-    <td><%= link_to 'Show', vlan %></td>
+    <td><%=h vlan.drac %></td>
     <td><%= link_to 'Edit', edit_vlan_path(vlan) %></td>
     <td><%= link_to 'Destroy', vlan, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>

@@ -38,7 +38,7 @@
                         :confirm => 'Are you sure you want to delete Service check: ' + service.service_check.name + '?',
                         :method => :delete
                         %>
-          <%= service.service_check.name %>
+          <%= link_to service.service_check.name, edit_service_check_path(service.service_check) %>
           
           </td>
         </tr>  

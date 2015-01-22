@@ -4,6 +4,7 @@
   <tr>
     <th>Name</th>
     <th>Pointing To</th>
+    <th>External Name</th>
   </tr>
 
 <% for dns_cname in @dns_cnames.sort{|a,b| a.name <=> b.name} %>
@@ -25,8 +26,10 @@
           </tr>
         <% end %>
       </table>      
-      
     </td>
+      <td>
+        <%= dns_cname.external %>
+      </td>
     
   </tr>
 <% end %>

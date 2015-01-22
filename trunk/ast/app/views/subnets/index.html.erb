@@ -1,0 +1,355 @@
+<h1>Subnet Management</h1>
+
+<%= link_to 'New subnet', new_subnet_path %>
+<div id="mmenu" style="height:30px; overflow:auto;">
+  <input type="text" id="subnet_search" value="" style="display:block; float:left;" />
+  <input type="button" id="search" value="search" style="display:block; float:left;"/>
+  <input type="button" id="clear_search" value="clear" style="display:block; float:left;"/>
+  <div id="result" style="display:block; float:left;"></div>
+</div>
+<div id="moptions" style="overflow:auto;">
+  <!-- hide_empty hides node that satisfy these conditions:
+  - Not a root node
+  - Empty description or empty children
+  - Not used in colo->vlan
+  -->
+  <input type="checkbox" id="hide_empty"/> Hide Empty
+
+  <input type="checkbox" id="show_only_empty"/> Show Only Empty
+</div>
+
+<div id='errlog'></div>
+<div id="subnets" class="demo">
+</div>
+<br/><br/>
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+  var storedData = getStorage('net_ast_checkboxes_'); 
+  jQuery("#subnets")
+    .jstree({ 
+      "plugins" : ["themes","json_data","crrm","cookies","search","types","hotkeys","contextmenu","ui"],
+      "core" : {
+        "animation" : "100"
+      },
+      // Get json data with ajax
+      "json_data" : {
+        // This tree is ajax enabled.
+        "ajax" : {
+          "async": true,
+          "url" : function(node) {
+            if (node == -1) {
+              return "/subnets/get_node/0.json"
+            } else {
+              return "/subnets/get_node/" + node.attr('id').replace("node_","") + ".json"
+            }
+          },
+          "data" : {
+            hide_empty: function() {
+              if ( jQuery("#hide_empty:checked").val() !== undefined) {
+                return true
+              } else {
+                return false
+              }
+            },
+            show_only_empty: function() {
+              if ( jQuery("#show_only_empty:checked").val() !== undefined) {
+                return true
+              } else {
+                return false
+              }
+            }
+          },
+          "success": function (data) {
+            //console.log(data)
+          },
+          // For some reason error callback is not happening
+          "complete": function (jqXHR, textStatus) {
+            if (textStatus == 'error') {
+              jQuery("#errlog").html(jqXHR.responseText);
+            }
+          },
+        },
+      },
+      // Search function
+      "search" : {
+        // This will hide non-matched element
+        "show_only_matches": true,
+        "search_method" : "jstree_contains_multi",
+
+        // This tree is ajax enabled.
+        "ajax" : {
+          "dataType": "jsonp",
+          "url" : function(node) {
+            return "/subnets/search/0.json"
+          },
+          "beforeSend" : function() {
+            jQuery("#spinner").show()
+          },
+          // data coming back from call is a two dimensional array
+          "success": function (data) {
+            jQuery("#result").html('Found ' + data.length + ' subnet(s).');
+            console.log(data);
+            var jstref = jQuery.jstree._focused();
+            // Turn off ajax async so node are loaded before we open the node
+            jstref._get_settings().json_data.ajax.async = false;
+            // Get each element and open the node to get to the leaf
+            jQuery.each(data, function(index,el) {
+              jQuery.each(el, function(index,e) {
+                if (jstref.is_closed(e)) {
+                  jstref.open_node(e);
+                } 
+              })
+            })
+            jstref._get_settings().json_data.ajax.async = true;
+          },
+          // For some reason error callback is not happening
+          "complete": function (jqXHR, textStatus) {
+            if (textStatus == 'error') {
+              jQuery("#errlog").html(jqXHR.responseText);
+              //alert( jqXHR.responseText );
+            }
+            jQuery("#spinner").hide()
+          },
+        },
+      },
+      "contextmenu" : {
+        items: customMenu
+      },
+      "themes" : {
+        "theme": "apple",
+        "dots" : true,
+        "icons" : true
+      }
+    })
+    // Double click on node, open up description for edit
+    .bind("dblclick.jstree", function (e) {
+      var n = jQuery(e.target).closest("li");
+      jQuery("#subnets").jstree("rename_attr", n, "description")
+    })
+    // Detect attribute change and submit the change
+    .bind("rename_attr.jstree", function (obj, data) {
+      var d = {};
+      // Dynamically build field for updating attribute
+      field = "subnet[" + data.rslt.attr + "]"
+      d[field] = data.rslt.new_name
+
+      var node = data.rslt.obj
+      jQuery.ajax({
+        type: 'POST',
+        url: '/subnets/update/' + node.attr('id').replace("node_","") + '.json', 
+        data: d,
+        success: function (data) {
+          // Need to refresh the parents in order to load the new description
+          // refresh event triggered open stat which is fine here
+          jQuery("#subnets").jstree("refresh",node.parent())
+        }
+      })
+    })
+    .bind("select_node.jstree", function (e, data) {
+      console.log('id: ' + jQuery(data.rslt.obj).attr('id'))
+    })
+  jQuery("#mmenu input").click(function () {
+    switch(this.id) {
+      case "search":
+        jQuery("#subnets").jstree("search", document.getElementById("subnet_search").value);
+      break
+      case "clear_search":
+        jQuery("#subnets").jstree("clear_search");
+        document.getElementById("subnet_search").value = '';
+        jQuery("#result").html('');
+      break
+      // By default, call the jstree function named after button id
+      default:
+        jQuery("#subnets").jstree(this.id);
+        break;
+    }
+  })
+  jQuery("#subnet_search").keypress(function (e) {
+    // If "enter" key is pressed
+    if (e.which == 13){
+      jQuery("#subnets").jstree("search", document.getElementById("subnet_search").value);
+    }
+  })
+  jQuery("#hide_empty").bind('change',function(){
+    // Hide the other option if this is checked
+    if ( jQuery("#hide_empty:checked").val() !== undefined) {
+      jQuery("#show_only_empty").attr("checked",false)
+      jQuery("#show_only_empty").trigger('change')
+    }
+    jQuery("#subnets").jstree("refresh")
+  })
+  jQuery("#show_only_empty").bind('change',function(){
+    if ( jQuery("#show_only_empty:checked").val() !== undefined) {
+      jQuery("#hide_empty").attr("checked",false)
+      jQuery("#hide_empty").trigger('change');
+    }
+    jQuery("#subnets").jstree("refresh")
+  })
+
+  // Saving checkbox state
+  jQuery('#moptions input:checkbox').bind('change',function(){
+    jQuery('#'+this.id+'txt').toggle(jQuery(this).is(':checked'));
+    // save the data on change
+    storedData.set(this.id, jQuery(this).is(':checked')?'checked':'not');
+  }).each(function() {
+    // on load, set the value to what we read from storage:
+    var val = storedData.get(this.id);
+    if (val == 'checked') jQuery(this).attr('checked', 'checked');
+    if (val == 'not') jQuery(this).removeAttr('checked');
+    //if (val) jQuery(this).trigger('change');
+  });
+});
+
+function customMenu(node) {
+  var vlan_details = {}
+  jQuery.ajax({
+    async: false,
+    type: 'GET',
+    url: '/subnets/list_vlan/0.json', 
+    success: function (data) {
+      jQuery.each(data, function(in1,el) {
+        // Each colo
+        jQuery.each(el, function(colo,e) {
+          // Display only if there are submenu to use
+          if ( e['vlan_detail_name'].length > 0 ) {
+            vlan_details[colo] = {}
+            vlan_details[colo]["label"] = colo
+            vlan_details[colo]["submenu"] = {}
+            jQuery.each(e['vlan_detail_name'], function(in3,vlan_name) {
+              vlan_details[colo]["submenu"][vlan_name] = {}
+              vlan_details[colo]["submenu"][vlan_name]["label"] = vlan_name
+              vlan_details[colo]["submenu"][vlan_name]["action"] = function() {
+                jQuery.ajax({
+                  url: '/subnets/assign_network/'+node.attr('id').replace('node_','') + '.json',
+                  data: {
+                    "vlan_detail_id": e['vlan_detail_id'][in3]
+                  },
+                  success: function(data) {
+                    jQuery("#subnets").jstree("refresh",node.parent())
+                  },
+                  error: function (jqXHR, textStatus) {
+                    jQuery("#errlog").html(jqXHR.responseText);
+                  }
+                })
+              }
+            })
+          }
+        })
+      })
+    },
+    error: function (jqXHR, textStatus) {
+      jQuery("#errlog").html(jqXHR.responseText);
+    }
+  })
+
+  var items = {
+    splitBySubnet: {
+      label: "Split by Subnet",
+      action: function () {
+        s_num=prompt("Enter split subnet for " + node.attr('network'), 34);
+        if (s_num) {
+          jQuery.ajax({
+            type: 'POST',
+            url: '/subnets/split/' + node.attr('id').replace("node_","") + '.json', 
+            data: {
+              "type": 'subnet',
+              "input": s_num
+            },
+            success: function (data) {
+              var jstref = jQuery.jstree._focused()
+              // Turn off ajax async so node are loaded before we open the node
+              jstref._get_settings().json_data.ajax.async = false;
+              jQuery("#subnets").jstree("refresh",node)
+              jstref._get_settings().json_data.ajax.async = true;
+              jQuery("#subnets").jstree("open_node",node)
+            },
+            error: function (jqXHR, textStatus) {
+              alert( "Request failed: " + jqXHR.responseText );
+              //jQuery("#errlog").html(jqXHR.responseText);
+            }
+          })
+        }
+      }
+    },
+    fillIn: {
+      label: "Fill In Gap",
+      action: function () {
+        jQuery.ajax({
+          type: 'GET',
+          url: '/subnets/fillin/' + node.attr('id').replace("node_","") + '.json', 
+          data: {
+          },
+          success: function (data) {
+            jQuery("#subnets").jstree("refresh",node)
+          },
+          error: function (jqXHR, textStatus) {
+            alert( "Request failed: " + jqXHR.responseText );
+            //jQuery("#errlog").html(jqXHR.responseText);
+          }
+        })
+      }
+    },
+    deleteSubnet: {
+      label: "Delete",
+      action: function () {
+        cnfrm = confirm("Are you sure about deleting selected subnets?")
+        if (cnfrm) {
+          // Use jQuery's generic "each" iterator for selected nodes
+          jQuery.each(jQuery("#subnets").jstree("get_selected"), function(index,element) {
+            id = jQuery(element).attr('id')
+            jQuery.ajax({
+              type: 'DELETE', //Rails uses this method to delete
+              async: false, //Want to make sure every delete has gone through before refresh
+              url: '/subnets/' + id.replace("node_","") + '.json', 
+            })
+          })
+          jQuery("#subnets").jstree("refresh",node.parent())
+        }
+      }
+    },
+    openAll: {
+      label: "Open All",
+      action: function () {
+        jQuery("#subnets").jstree("open_all", node)
+      }
+    },
+    assignSubnet: {
+      label: "Assign Network To",
+      submenu: vlan_details
+    }
+  }
+  return items
+}
+
+// Saving state to cookies
+function getStorage(key_prefix) {
+  // this function will return us an object with a "set" and "get" method
+  // using either localStorage if available, or defaulting to document.cookie
+  if (window.localStorage) {
+    // use localStorage:
+    return {
+      set: function(id, data) {
+        localStorage.setItem(key_prefix+id, data);
+      },
+      get: function(id) {
+        return localStorage.getItem(key_prefix+id);
+      }
+    };
+  } else {
+    // use document.cookie:
+    return {
+      set: function(id, data) {
+        document.cookie = key_prefix+id+'='+encodeURIComponent(data);
+      },
+      get: function(id, data) {
+        var cookies = document.cookie, parsed = {};
+        cookies.replace(/([^=]+)=([^;]*);?\s*/g, function(whole, key, value) {
+           parsed[key] = decodeURIComponent(value);
+        });
+        return parsed[key_prefix+id];
+      }
+    };
+  }
+}
+</script>

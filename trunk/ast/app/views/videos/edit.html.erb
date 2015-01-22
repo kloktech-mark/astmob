@@ -1,0 +1,30 @@
+<h1>Editing video</h1>
+
+<%= error_messages_for :video %>
+
+<% form_for(@video) do |f| %>
+  <%= render (:partial => "assets/mini_edit", :object => @video.asset) %>
+
+  <p>
+    <b>Video model</b><br />
+    <%= f.collection_select( "video_model_id", VideoModel.find(:all), "id", "collection_name", {:include_blank => true}) %>
+  </p>
+  
+  <%= render (:partial => "interfaces/mini_edit", :object => @video.asset) %>
+
+  <br/>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+
+  <br/>
+  <%= render(:partial => "audits/audits",:object => @video.asset) %>
+  <br/>
+  <br/>
+
+<!--
+<%= link_to 'Show', @video %> |
+<%= link_to 'Back', videos_path %>
+-->
